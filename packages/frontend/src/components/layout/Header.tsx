@@ -11,7 +11,7 @@ export function Header() {
       className={`sticky top-0 z-50 transition-all duration-300 ${
         isAdmin
           ? 'bg-[var(--theme-gradient-header)] border-b-2 border-primary shadow-[0_2px_8px_rgba(0,0,0,0.3)]'
-          : 'bg-[var(--theme-gradient-header)] border-b border-border shadow-[0_1px_4px_rgba(0,0,0,0.04)]'
+          : 'bg-surface border-b border-border shadow-[0_1px_4px_rgba(0,0,0,0.04)]'
       }`}
     >
       <div className="max-w-[calc(var(--theme-max-width)+40px)] w-full h-[var(--theme-header-height)] mx-auto px-5 flex items-center justify-between">
