@@ -28,7 +28,7 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
 
   return (
     <div
-      className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] cursor-pointer ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}
+      className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] cursor-pointer overflow-hidden ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}
       onClick={handlePlay}
     >
       <button
@@ -60,7 +60,7 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
           )}
         </p>
         {episode.description && (
-          <p className="text-[13px] text-text-secondary leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">{episode.description}</p>
+          <p className="text-[13px] text-text-secondary leading-relaxed line-clamp-2">{episode.description}</p>
         )}
       </div>
     </div>

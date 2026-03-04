@@ -19,7 +19,7 @@ export function AppLayout() {
   }, [isAdmin, isPlaying, pause]);
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative overflow-x-hidden">
       {!isAdmin && (
         <div className="fixed top-0 left-0 right-0 h-[400px] bg-[var(--theme-gradient-glow)] pointer-events-none z-0" />
       )}
