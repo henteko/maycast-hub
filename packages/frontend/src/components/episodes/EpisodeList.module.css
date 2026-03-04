@@ -1,0 +1,10 @@
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.empty {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--color-text-secondary);
+}
