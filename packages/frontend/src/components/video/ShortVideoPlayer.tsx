@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import type { Episode } from '@maycast/shared';
+import type { VideoItem } from '../../pages/ShowPage.js';
 
 interface Props {
-  episodes: Episode[];
+  videos: VideoItem[];
   currentIndex: number;
   showTitle?: string;
   artworkUrl?: string | null;
@@ -12,7 +13,7 @@ interface Props {
   onPlayEpisode?: (episode: Episode) => void;
 }
 
-export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl, onClose, onIndexChange, onPlayEpisode }: Props) {
+export function ShortVideoPlayer({ videos, currentIndex, showTitle, artworkUrl, onClose, onIndexChange, onPlayEpisode }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -26,7 +27,7 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
   const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const skipIndicatorTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const episode = episodes[currentIndex];
+  const video = videos[currentIndex];
 
   // Lock body scroll
   useEffect(() => {
@@ -64,12 +65,12 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
   }, []);
 
   const handleEnded = useCallback(() => {
-    if (currentIndex < episodes.length - 1) {
+    if (currentIndex < videos.length - 1) {
       onIndexChange(currentIndex + 1);
     } else {
       onClose();
     }
-  }, [currentIndex, episodes.length, onIndexChange, onClose]);
+  }, [currentIndex, videos.length, onIndexChange, onClose]);
 
   const togglePlayPause = useCallback(() => {
     const v = videoRef.current;
@@ -162,7 +163,7 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
 
     if (delta < -threshold) {
       // Swipe up → next
-      if (currentIndex < episodes.length - 1) {
+      if (currentIndex < videos.length - 1) {
         onIndexChange(currentIndex + 1);
       }
     } else if (delta > threshold) {
@@ -173,9 +174,9 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
         onClose();
       }
     }
-  }, [currentIndex, episodes.length, onIndexChange, onClose]);
+  }, [currentIndex, videos.length, onIndexChange, onClose]);
 
-  if (!episode?.videoUrl) return null;
+  if (!video) return null;
 
   return createPortal(
     <div
@@ -187,8 +188,8 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
       {/* Video */}
       <video
         ref={videoRef}
-        key={episode.videoUrl}
-        src={episode.videoUrl}
+        key={video.videoUrl}
+        src={video.videoUrl}
         className="w-full h-full object-contain"
         playsInline
         autoPlay
@@ -238,15 +239,15 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl
       <div className="absolute bottom-0 left-0 right-0" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         {/* Info */}
         <div className="px-4 pb-3 bg-gradient-to-t from-black/70 to-transparent pt-16">
-          <p className="text-white font-semibold text-[15px] leading-tight mb-1">{episode.title}</p>
+          <p className="text-white font-semibold text-[15px] leading-tight mb-1">{video.episodeTitle}</p>
           <div className="flex items-center gap-2">
             {showTitle && <span className="text-white/70 text-[13px]">{showTitle}</span>}
-            {episode.audioUrl && onPlayEpisode && (
+            {video.episode.audioUrl && onPlayEpisode && (
               <button
                 className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full border-none text-white text-[12px] font-semibold cursor-pointer transition-colors duration-150 hover:bg-white/30"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPlayEpisode(episode);
+                  onPlayEpisode(video.episode);
                 }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

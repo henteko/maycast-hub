@@ -1,8 +1,8 @@
 import { useRef, useState, useCallback } from 'react';
-import type { Episode } from '@maycast/shared';
+import type { VideoItem } from '../../pages/ShowPage.js';
 
 interface Props {
-  episodes: Episode[];
+  videos: VideoItem[];
   onVideoSelect: (index: number) => void;
 }
 
@@ -35,22 +35,22 @@ function VideoThumbnail({ videoUrl }: { videoUrl: string }) {
   );
 }
 
-export function ShortVideoCarousel({ episodes, onVideoSelect }: Props) {
-  if (episodes.length === 0) return null;
+export function ShortVideoCarousel({ videos, onVideoSelect }: Props) {
+  if (videos.length === 0) return null;
 
   return (
     <section className="mb-8">
       <h2 className="text-lg font-semibold mb-4 tracking-[-0.01em]">ショート動画</h2>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-        {episodes.map((ep, index) => (
+        {videos.map((video, index) => (
           <button
-            key={ep.id}
+            key={video.videoId}
             className="w-[120px] shrink-0 bg-transparent border-none p-0 cursor-pointer group text-left"
             onClick={() => onVideoSelect(index)}
           >
             <div className="w-[120px] aspect-[9/16] rounded-[var(--theme-radius-sm)] bg-[#1a1a1a] overflow-hidden relative">
               {/* Thumbnail via paused video */}
-              {ep.videoUrl && <VideoThumbnail videoUrl={ep.videoUrl} />}
+              <VideoThumbnail videoUrl={video.videoUrl} />
               {/* Play icon */}
               <div className="absolute inset-0 flex items-center justify-center z-[1]">
                 <div className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-150 group-hover:scale-110">
@@ -62,7 +62,7 @@ export function ShortVideoCarousel({ episodes, onVideoSelect }: Props) {
               {/* Title overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent z-[1]">
                 <span className="text-white text-[11px] font-medium leading-tight line-clamp-2">
-                  {ep.title}
+                  {video.episodeTitle}
                 </span>
               </div>
             </div>

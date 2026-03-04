@@ -24,7 +24,6 @@ CREATE TABLE IF NOT EXISTS episodes (
     status episode_status NOT NULL DEFAULT 'draft',
     audio_url TEXT,
     audio_duration INTEGER,
-    video_url TEXT,
     published_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -32,6 +31,17 @@ CREATE TABLE IF NOT EXISTS episodes (
 
 CREATE INDEX IF NOT EXISTS idx_episodes_show_id ON episodes(show_id);
 CREATE INDEX IF NOT EXISTS idx_episodes_status ON episodes(status);
+
+-- Episode videos (1:many relationship)
+CREATE TABLE IF NOT EXISTS episode_videos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    episode_id UUID NOT NULL REFERENCES episodes(id) ON DELETE CASCADE,
+    video_url TEXT NOT NULL,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_episode_videos_episode_id ON episode_videos(episode_id);
 
 -- Play events
 CREATE TABLE IF NOT EXISTS play_events (

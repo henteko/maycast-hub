@@ -18,7 +18,7 @@ episodesRouter.get('/:id', async (req, res, next) => {
 // POST /api/episodes
 episodesRouter.post('/', async (req, res, next) => {
   try {
-    const { showId, title, description, audioUrl, audioDuration, videoUrl } = req.body;
+    const { showId, title, description, audioUrl, audioDuration, videoUrls } = req.body;
     if (!showId) throw new AppError(400, 'showId is required');
     if (!title) throw new AppError(400, 'title is required');
     const episode = await episodeRepository.create({
@@ -27,7 +27,7 @@ episodesRouter.post('/', async (req, res, next) => {
       description,
       audioUrl,
       audioDuration,
-      videoUrl,
+      videoUrls,
     });
     res.status(201).json({ data: episode });
   } catch (err) {
@@ -38,13 +38,13 @@ episodesRouter.post('/', async (req, res, next) => {
 // PUT /api/episodes/:id
 episodesRouter.put('/:id', async (req, res, next) => {
   try {
-    const { title, description, audioUrl, audioDuration, videoUrl } = req.body;
+    const { title, description, audioUrl, audioDuration, videoUrls } = req.body;
     const episode = await episodeRepository.update(req.params.id, {
       title,
       description,
       audioUrl,
       audioDuration,
-      videoUrl,
+      videoUrls,
     });
     if (!episode) throw new AppError(404, 'Episode not found');
     res.json({ data: episode });

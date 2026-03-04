@@ -1,5 +1,13 @@
 export type EpisodeStatus = 'draft' | 'published' | 'unpublished';
 
+export interface EpisodeVideo {
+  id: string;
+  episodeId: string;
+  videoUrl: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
 export interface Episode {
   id: string;
   showId: string;
@@ -8,7 +16,7 @@ export interface Episode {
   status: EpisodeStatus;
   audioUrl: string | null;
   audioDuration: number | null;
-  videoUrl: string | null;
+  videos: EpisodeVideo[];
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -20,7 +28,7 @@ export interface CreateEpisodeInput {
   description?: string;
   audioUrl?: string;
   audioDuration?: number;
-  videoUrl?: string;
+  videoUrls?: string[];
 }
 
 export interface UpdateEpisodeInput {
@@ -28,5 +36,5 @@ export interface UpdateEpisodeInput {
   description?: string;
   audioUrl?: string | null;
   audioDuration?: number | null;
-  videoUrl?: string | null;
+  videoUrls?: string[];
 }

@@ -8,6 +8,14 @@ import { usePlayer } from '../components/player/PlayerContext.js';
 import { ShortVideoCarousel } from '../components/video/ShortVideoCarousel.js';
 import { ShortVideoPlayer } from '../components/video/ShortVideoPlayer.js';
 
+export interface VideoItem {
+  videoId: string;
+  videoUrl: string;
+  episodeId: string;
+  episodeTitle: string;
+  episode: Episode;
+}
+
 export function ShowPage() {
   const { id } = useParams<{ id: string }>();
   const [videoPlayerIndex, setVideoPlayerIndex] = useState<number | null>(null);
@@ -46,10 +54,22 @@ export function ShowPage() {
     play(episode, { artworkUrl: show?.artworkUrl, showTitle: show?.title });
   }, [play, show?.artworkUrl, show?.title]);
 
-  const videoEpisodes = useMemo(
-    () => (episodes ?? []).filter((ep) => ep.videoUrl),
-    [episodes],
-  );
+  const videoItems = useMemo<VideoItem[]>(() => {
+    if (!episodes) return [];
+    const items: VideoItem[] = [];
+    for (const ep of episodes) {
+      for (const video of ep.videos) {
+        items.push({
+          videoId: video.id,
+          videoUrl: video.videoUrl,
+          episodeId: ep.id,
+          episodeTitle: ep.title,
+          episode: ep,
+        });
+      }
+    }
+    return items;
+  }, [episodes]);
 
   if (showLoading || episodesLoading) return <p className="py-12 px-4 text-center text-text-secondary">読み込み中...</p>;
   if (!show) return <p className="py-12 px-4 text-center text-text-secondary">番組が見つかりません</p>;
@@ -71,9 +91,9 @@ export function ShowPage() {
           )}
         </div>
       </div>
-      {videoEpisodes.length > 0 && (
+      {videoItems.length > 0 && (
         <ShortVideoCarousel
-          episodes={videoEpisodes}
+          videos={videoItems}
           onVideoSelect={handleVideoSelect}
         />
       )}
@@ -81,7 +101,7 @@ export function ShowPage() {
       <EpisodeList episodes={episodes ?? []} artworkUrl={show.artworkUrl} showTitle={show.title} />
       {videoPlayerIndex !== null && (
         <ShortVideoPlayer
-          episodes={videoEpisodes}
+          videos={videoItems}
           currentIndex={videoPlayerIndex}
           showTitle={show.title}
           artworkUrl={show.artworkUrl}
