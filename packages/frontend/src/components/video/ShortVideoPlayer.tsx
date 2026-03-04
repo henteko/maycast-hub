@@ -164,6 +164,10 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
   const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Swipe hint
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+  const hasInteracted = useRef(false);
+
   const video = videos[currentIndex];
   const prevVideo = currentIndex > 0 ? videos[currentIndex - 1] : null;
   const nextVideo = currentIndex < videos.length - 1 ? videos[currentIndex + 1] : null;
@@ -175,14 +179,65 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  // Esc key
+  // Navigate to next/prev with animation
+  const goToNext = useCallback(() => {
+    if (isAnimating || !nextVideo) return;
+    setShowSwipeHint(false);
+    setIsAnimating(true);
+    setTranslateY(-window.innerHeight);
+    setTimeout(() => {
+      onIndexChange(currentIndex + 1);
+    }, 300);
+  }, [isAnimating, nextVideo, currentIndex, onIndexChange]);
+
+  const goToPrev = useCallback(() => {
+    if (isAnimating) return;
+    setShowSwipeHint(false);
+    if (prevVideo) {
+      setIsAnimating(true);
+      setTranslateY(window.innerHeight);
+      setTimeout(() => {
+        onIndexChange(currentIndex - 1);
+      }, 300);
+    } else {
+      setIsAnimating(true);
+      setTranslateY(window.innerHeight);
+      setTimeout(() => {
+        onClose();
+      }, 300);
+    }
+  }, [isAnimating, prevVideo, currentIndex, onIndexChange, onClose]);
+
+  // Keyboard: Esc, ArrowUp, ArrowDown
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); goToNext(); }
+      if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goToPrev(); }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [onClose]);
+  }, [onClose, goToNext, goToPrev]);
+
+  // Mouse wheel
+  const wheelTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (wheelTimer.current) return; // debounce
+      if (e.deltaY > 30) {
+        goToNext();
+        wheelTimer.current = setTimeout(() => { wheelTimer.current = null; }, 500);
+      } else if (e.deltaY < -30) {
+        goToPrev();
+        wheelTimer.current = setTimeout(() => { wheelTimer.current = null; }, 500);
+      }
+    };
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, [goToNext, goToPrev]);
 
   // Reset state on index change
   useEffect(() => {
@@ -192,6 +247,13 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
     setTranslateY(0);
     setIsAnimating(false);
   }, [currentIndex]);
+
+  // Auto-hide swipe hint after 3 seconds or on first interaction
+  useEffect(() => {
+    if (!showSwipeHint) return;
+    const timer = setTimeout(() => setShowSwipeHint(false), 3000);
+    return () => clearTimeout(timer);
+  }, [showSwipeHint]);
 
   // Attach event listeners to active video
   useEffect(() => {
@@ -295,6 +357,10 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
   // Swipe handling
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (isAnimating) return;
+    if (!hasInteracted.current) {
+      hasInteracted.current = true;
+      setShowSwipeHint(false);
+    }
     touchStartY.current = e.touches[0].clientY;
   }, [isAnimating]);
 
@@ -313,38 +379,18 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
     if (touchStartY.current === null || isAnimating) return;
     touchStartY.current = null;
     const threshold = 80;
-    const h = window.innerHeight;
 
     if (translateY < -threshold && nextVideo) {
-      // Swipe up → next
-      setIsAnimating(true);
-      setTranslateY(-h);
-      setTimeout(() => {
-        onIndexChange(currentIndex + 1);
-      }, 300);
+      goToNext();
     } else if (translateY > threshold) {
-      if (prevVideo) {
-        // Swipe down → previous
-        setIsAnimating(true);
-        setTranslateY(h);
-        setTimeout(() => {
-          onIndexChange(currentIndex - 1);
-        }, 300);
-      } else {
-        // First video → close
-        setIsAnimating(true);
-        setTranslateY(h);
-        setTimeout(() => {
-          onClose();
-        }, 300);
-      }
+      goToPrev();
     } else {
       // Snap back
       setIsAnimating(true);
       setTranslateY(0);
       setTimeout(() => setIsAnimating(false), 300);
     }
-  }, [isAnimating, translateY, nextVideo, prevVideo, currentIndex, onIndexChange, onClose]);
+  }, [isAnimating, translateY, nextVideo, goToNext, goToPrev]);
 
   if (!video) return null;
 
@@ -423,6 +469,66 @@ export function ShortVideoPlayer({ videos, currentIndex, showTitle, onClose, onI
           </div>
         )}
       </div>
+
+      {/* Nav buttons (PC) */}
+      {prevVideo && (
+        <button
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 backdrop-blur-sm border-none text-white flex items-center justify-center cursor-pointer transition-colors duration-150 max-md:hidden"
+          style={{ marginTop: 'env(safe-area-inset-top, 0px)' }}
+          onClick={goToPrev}
+          aria-label="前の動画"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 15l-6-6-6 6" />
+          </svg>
+        </button>
+      )}
+      {nextVideo && (
+        <button
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 backdrop-blur-sm border-none text-white flex items-center justify-center cursor-pointer transition-colors duration-150 max-md:hidden"
+          style={{ marginBottom: 'env(safe-area-inset-bottom, 0px)' }}
+          onClick={goToNext}
+          aria-label="次の動画"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      )}
+
+      {/* Swipe hint */}
+      {showSwipeHint && nextVideo && (
+        <div
+          className="absolute bottom-24 left-0 right-0 flex flex-col items-center pointer-events-none z-10"
+          style={{
+            paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            animation: 'swipe-hint-fade 3s ease-in-out forwards',
+          }}
+        >
+          <div
+            className="flex flex-col items-center gap-1"
+            style={{ animation: 'swipe-hint-bounce 1.5s ease-in-out infinite' }}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+              <path d="M18 15l-6-6-6 6" />
+            </svg>
+            <span className="text-white/80 text-[12px] font-medium">スワイプして次の動画へ</span>
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @keyframes swipe-hint-bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes swipe-hint-fade {
+          0% { opacity: 0; }
+          15% { opacity: 1; }
+          70% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+      `}</style>
     </div>,
     document.body,
   );
