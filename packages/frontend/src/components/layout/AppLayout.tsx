@@ -5,7 +5,7 @@ import { AudioPlayer } from '../player/AudioPlayer.js';
 import { usePlayer } from '../player/PlayerContext.js';
 
 export function AppLayout() {
-  const { episode } = usePlayer();
+  const { episode, isPlaying, pause } = usePlayer();
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   const hasPlayer = !!episode && !isAdmin;
@@ -13,6 +13,10 @@ export function AppLayout() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isAdmin ? 'admin' : 'listener');
   }, [isAdmin]);
+
+  useEffect(() => {
+    if (isAdmin && isPlaying) pause();
+  }, [isAdmin, isPlaying, pause]);
 
   return (
     <div className="min-h-screen relative">
