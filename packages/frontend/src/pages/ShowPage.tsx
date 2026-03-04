@@ -23,18 +23,18 @@ export function ShowPage() {
 
   return (
     <div>
-      <div className="flex gap-5 mb-8 items-center max-md:flex-col max-md:items-start">
+      <div className="flex gap-8 mb-8 items-start max-md:flex-col max-md:items-center">
         {show.artworkUrl && (
           <img
             src={show.artworkUrl}
             alt={show.title}
-            className="w-[120px] h-[120px] rounded-(--theme-radius) object-cover shrink-0 shadow-(--theme-shadow-card) max-md:w-[100px] max-md:h-[100px]"
+            className="w-[260px] h-[260px] rounded-(--theme-radius) object-cover shrink-0 shadow-(--theme-shadow-card) max-md:w-[200px] max-md:h-[200px]"
           />
         )}
-        <div className="min-w-0">
-          <h1 className="text-[26px] font-bold tracking-[-0.02em] max-md:text-[22px]">{show.title}</h1>
+        <div className="min-w-0 max-md:text-center">
+          <h1 className="text-[28px] font-bold tracking-[-0.02em] max-md:text-[22px]">{show.title}</h1>
           {show.description && (
-            <p className="text-text-secondary mt-2 leading-[1.6]">{show.description}</p>
+            <p className="text-text-secondary mt-3 leading-[1.6]">{show.description}</p>
           )}
         </div>
       </div>

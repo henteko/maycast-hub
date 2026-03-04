@@ -27,7 +27,10 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
   };
 
   return (
-    <div className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}>
+    <div
+      className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] cursor-pointer ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}
+      onClick={handlePlay}
+    >
       <button
         className="size-11 rounded-full border-none bg-primary text-bg text-[15px] flex items-center justify-center shrink-0 self-center transition-all duration-150 font-bold hover:enabled:bg-primary-hover hover:enabled:scale-105 disabled:opacity-30 disabled:cursor-not-allowed"
         onClick={handlePlay}
