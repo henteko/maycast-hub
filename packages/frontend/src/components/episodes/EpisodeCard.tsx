@@ -44,10 +44,20 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
       </button>
       <div className="min-w-0 flex-1">
         <h4 className="font-[var(--font-display)] text-[15px] font-semibold mb-1 tracking-[-0.01em]">{episode.title}</h4>
-        <p className="text-[13px] text-text-secondary mb-1.5">
-          {episode.publishedAt &&
-            new Date(episode.publishedAt).toLocaleDateString('ja-JP')}
-          {episode.audioDuration && ` · ${formatDuration(episode.audioDuration)}`}
+        <p className="text-[13px] text-text-secondary mb-1.5 flex items-center gap-1.5">
+          <span>
+            {episode.publishedAt &&
+              new Date(episode.publishedAt).toLocaleDateString('ja-JP')}
+            {episode.audioDuration && ` · ${formatDuration(episode.audioDuration)}`}
+          </span>
+          {episode.videoUrl && (
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-primary/10 text-primary text-[11px] font-semibold rounded-full">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7" /><rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+              動画
+            </span>
+          )}
         </p>
         {episode.description && (
           <p className="text-[13px] text-text-secondary leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">{episode.description}</p>

@@ -6,11 +6,13 @@ interface Props {
   episodes: Episode[];
   currentIndex: number;
   showTitle?: string;
+  artworkUrl?: string | null;
   onClose: () => void;
   onIndexChange: (index: number) => void;
+  onPlayEpisode?: (episode: Episode) => void;
 }
 
-export function ShortVideoPlayer({ episodes, currentIndex, showTitle, onClose, onIndexChange }: Props) {
+export function ShortVideoPlayer({ episodes, currentIndex, showTitle, artworkUrl, onClose, onIndexChange, onPlayEpisode }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -237,7 +239,23 @@ export function ShortVideoPlayer({ episodes, currentIndex, showTitle, onClose, o
         {/* Info */}
         <div className="px-4 pb-3 bg-gradient-to-t from-black/70 to-transparent pt-16">
           <p className="text-white font-semibold text-[15px] leading-tight mb-1">{episode.title}</p>
-          {showTitle && <p className="text-white/70 text-[13px]">{showTitle}</p>}
+          <div className="flex items-center gap-2">
+            {showTitle && <span className="text-white/70 text-[13px]">{showTitle}</span>}
+            {episode.audioUrl && onPlayEpisode && (
+              <button
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full border-none text-white text-[12px] font-semibold cursor-pointer transition-colors duration-150 hover:bg-white/30"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPlayEpisode(episode);
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+                </svg>
+                エピソードを聴く
+              </button>
+            )}
+          </div>
         </div>
         {/* Seek bar */}
         <div

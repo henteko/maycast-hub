@@ -1,14 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import type { Episode } from '@maycast/shared';
 import { api } from '../api/client.js';
 import { EpisodeList } from '../components/episodes/EpisodeList.js';
+import { usePlayer } from '../components/player/PlayerContext.js';
 import { ShortVideoCarousel } from '../components/video/ShortVideoCarousel.js';
 import { ShortVideoPlayer } from '../components/video/ShortVideoPlayer.js';
 
 export function ShowPage() {
   const { id } = useParams<{ id: string }>();
   const [videoPlayerIndex, setVideoPlayerIndex] = useState<number | null>(null);
+  const { play, pause, resume, isPlaying } = usePlayer();
+  const wasPlayingRef = useRef(false);
 
   const { data: show, isLoading: showLoading } = useQuery({
     queryKey: ['shows', id],
@@ -21,6 +25,26 @@ export function ShowPage() {
     queryFn: () => api.episodes.listByShow(id!),
     enabled: !!id,
   });
+
+  const handleVideoSelect = useCallback((index: number) => {
+    wasPlayingRef.current = isPlaying;
+    if (isPlaying) pause();
+    setVideoPlayerIndex(index);
+  }, [isPlaying, pause]);
+
+  const handleVideoClose = useCallback(() => {
+    setVideoPlayerIndex(null);
+    if (wasPlayingRef.current) {
+      resume();
+      wasPlayingRef.current = false;
+    }
+  }, [resume]);
+
+  const handlePlayEpisode = useCallback((episode: Episode) => {
+    wasPlayingRef.current = false;
+    setVideoPlayerIndex(null);
+    play(episode, { artworkUrl: show?.artworkUrl, showTitle: show?.title });
+  }, [play, show?.artworkUrl, show?.title]);
 
   const videoEpisodes = useMemo(
     () => (episodes ?? []).filter((ep) => ep.videoUrl),
@@ -50,7 +74,7 @@ export function ShowPage() {
       {videoEpisodes.length > 0 && (
         <ShortVideoCarousel
           episodes={videoEpisodes}
-          onVideoSelect={(index) => setVideoPlayerIndex(index)}
+          onVideoSelect={handleVideoSelect}
         />
       )}
       <h2 className="text-lg font-semibold mb-4 tracking-[-0.01em]">エピソード</h2>
@@ -60,8 +84,10 @@ export function ShowPage() {
           episodes={videoEpisodes}
           currentIndex={videoPlayerIndex}
           showTitle={show.title}
-          onClose={() => setVideoPlayerIndex(null)}
+          artworkUrl={show.artworkUrl}
+          onClose={handleVideoClose}
           onIndexChange={setVideoPlayerIndex}
+          onPlayEpisode={handlePlayEpisode}
         />
       )}
     </div>
