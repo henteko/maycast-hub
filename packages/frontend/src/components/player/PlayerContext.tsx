@@ -2,25 +2,37 @@ import { createContext, useContext, useState, useRef, useCallback, useEffect, ty
 import type { Episode } from '@maycast/shared';
 import { api } from '../../api/client.js';
 
+interface PlayerMeta {
+  artworkUrl?: string | null;
+  showTitle?: string;
+}
+
 interface PlayerState {
   episode: Episode | null;
   isPlaying: boolean;
   currentTime: number;
   duration: number;
+  playbackRate: number;
+  artworkUrl: string | null;
+  showTitle: string;
 }
 
 interface PlayerContextType extends PlayerState {
   audioRef: React.RefObject<HTMLAudioElement | null>;
-  play: (episode: Episode) => void;
+  play: (episode: Episode, meta?: PlayerMeta) => void;
   pause: () => void;
   resume: () => void;
   seek: (time: number) => void;
   togglePlayPause: () => void;
+  skipForward: (seconds?: number) => void;
+  skipBackward: (seconds?: number) => void;
+  setPlaybackRate: (rate: number) => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
 
 const RESUME_KEY_PREFIX = 'maycast_resume_';
+const SPEED_KEY = 'maycast_playback_rate';
 
 function getSavedPosition(episodeId: string): number {
   try {
@@ -39,6 +51,15 @@ function savePosition(episodeId: string, time: number) {
   }
 }
 
+function getSavedSpeed(): number {
+  try {
+    const val = localStorage.getItem(SPEED_KEY);
+    return val ? parseFloat(val) : 1;
+  } catch {
+    return 1;
+  }
+}
+
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [state, setState] = useState<PlayerState>({
@@ -46,12 +67,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     isPlaying: false,
     currentTime: 0,
     duration: 0,
+    playbackRate: getSavedSpeed(),
+    artworkUrl: null,
+    showTitle: '',
   });
   const playRecordedRef = useRef<string | null>(null);
   const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const episodeIdRef = useRef<string | null>(null);
 
-  const play = useCallback((episode: Episode) => {
+  const play = useCallback((episode: Episode, meta?: PlayerMeta) => {
     const audio = audioRef.current;
     if (!audio || !episode.audioUrl) return;
 
@@ -60,16 +84,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (savedPos > 0) {
       audio.currentTime = savedPos;
     }
+    const rate = getSavedSpeed();
+    audio.playbackRate = rate;
+    audio.preservesPitch = true;
     audio.play();
 
     episodeIdRef.current = episode.id;
 
-    setState({
+    setState((s) => ({
+      ...s,
       episode,
       isPlaying: true,
       currentTime: savedPos,
       duration: 0,
-    });
+      playbackRate: rate,
+      artworkUrl: meta?.artworkUrl ?? null,
+      showTitle: meta?.showTitle ?? '',
+    }));
 
     // Record play event
     if (playRecordedRef.current !== episode.id) {
@@ -103,6 +134,36 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       resume();
     }
   }, [state.isPlaying, pause, resume]);
+
+  const skipForward = useCallback((seconds = 15) => {
+    const audio = audioRef.current;
+    if (audio) {
+      const newTime = Math.min(audio.currentTime + seconds, audio.duration || Infinity);
+      audio.currentTime = newTime;
+      setState((s) => ({ ...s, currentTime: newTime }));
+    }
+  }, []);
+
+  const skipBackward = useCallback((seconds = 15) => {
+    const audio = audioRef.current;
+    if (audio) {
+      const newTime = Math.max(audio.currentTime - seconds, 0);
+      audio.currentTime = newTime;
+      setState((s) => ({ ...s, currentTime: newTime }));
+    }
+  }, []);
+
+  const setPlaybackRate = useCallback((rate: number) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.playbackRate = rate;
+      audio.preservesPitch = true;
+    }
+    try {
+      localStorage.setItem(SPEED_KEY, String(rate));
+    } catch {}
+    setState((s) => ({ ...s, playbackRate: rate }));
+  }, []);
 
   // Set up audio event listeners
   useEffect(() => {
@@ -158,7 +219,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
     navigator.mediaSession.metadata = new MediaMetadata({
       title: state.episode.title,
-      artist: 'Maycast Hub',
+      artist: state.showTitle || 'Maycast Hub',
+      ...(state.artworkUrl ? { artwork: [{ src: state.artworkUrl }] } : {}),
     });
 
     navigator.mediaSession.setActionHandler('play', () => resume());
@@ -166,11 +228,24 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     navigator.mediaSession.setActionHandler('seekto', (details) => {
       if (details.seekTime != null) seek(details.seekTime);
     });
-  }, [state.episode, pause, resume, seek]);
+    navigator.mediaSession.setActionHandler('seekforward', () => skipForward(15));
+    navigator.mediaSession.setActionHandler('seekbackward', () => skipBackward(15));
+  }, [state.episode, state.artworkUrl, state.showTitle, pause, resume, seek, skipForward, skipBackward]);
 
   return (
     <PlayerContext.Provider
-      value={{ ...state, audioRef, play, pause, resume, seek, togglePlayPause }}
+      value={{
+        ...state,
+        audioRef,
+        play,
+        pause,
+        resume,
+        seek,
+        togglePlayPause,
+        skipForward,
+        skipBackward,
+        setPlaybackRate,
+      }}
     >
       <audio ref={audioRef} />
       {children}

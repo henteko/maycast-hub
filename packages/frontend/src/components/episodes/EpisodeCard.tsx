@@ -4,6 +4,8 @@ import styles from './EpisodeCard.module.css';
 
 interface Props {
   episode: Episode;
+  artworkUrl?: string | null;
+  showTitle?: string;
 }
 
 function formatDuration(seconds: number | null): string {
@@ -13,7 +15,7 @@ function formatDuration(seconds: number | null): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function EpisodeCard({ episode }: Props) {
+export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
   const { play, episode: currentEpisode, isPlaying, togglePlayPause } = usePlayer();
   const isCurrent = currentEpisode?.id === episode.id;
 
@@ -21,7 +23,7 @@ export function EpisodeCard({ episode }: Props) {
     if (isCurrent) {
       togglePlayPause();
     } else {
-      play(episode);
+      play(episode, { artworkUrl, showTitle });
     }
   };
 
@@ -32,7 +34,11 @@ export function EpisodeCard({ episode }: Props) {
         onClick={handlePlay}
         disabled={!episode.audioUrl}
       >
-        {isCurrent && isPlaying ? '⏸' : '▶'}
+        {isCurrent && isPlaying ? (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+        )}
       </button>
       <div className={styles.info}>
         <h4 className={styles.title}>{episode.title}</h4>

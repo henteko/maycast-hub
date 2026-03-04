@@ -40,7 +40,7 @@ export function ShowPage() {
         </div>
       </div>
       <h2 className={styles.sectionTitle}>エピソード</h2>
-      <EpisodeList episodes={episodes ?? []} />
+      <EpisodeList episodes={episodes ?? []} artworkUrl={show.artworkUrl} showTitle={show.title} />
     </div>
   );
 }

@@ -14,6 +14,12 @@ export function EpisodePage() {
     enabled: !!id,
   });
 
+  const { data: show } = useQuery({
+    queryKey: ['shows', episode?.showId],
+    queryFn: () => api.shows.get(episode!.showId),
+    enabled: !!episode?.showId,
+  });
+
   if (isLoading) return <p className={styles.loading}>読み込み中...</p>;
   if (!episode) return <p className={styles.loading}>エピソードが見つかりません</p>;
 
@@ -23,7 +29,7 @@ export function EpisodePage() {
     if (isCurrent) {
       togglePlayPause();
     } else {
-      play(episode);
+      play(episode, { artworkUrl: show?.artworkUrl, showTitle: show?.title });
     }
   };
 
