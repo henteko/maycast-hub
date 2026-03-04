@@ -1,24 +1,26 @@
 .card {
   display: flex;
   gap: 16px;
-  padding: 16px;
+  padding: 18px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.15s;
+  transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
 }
 
 .card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
   text-decoration: none;
 }
 
 .artwork {
-  width: 80px;
-  height: 80px;
-  border-radius: var(--radius);
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   flex-shrink: 0;
   background: var(--color-bg);
@@ -37,16 +39,22 @@
   align-items: center;
   justify-content: center;
   font-size: 32px;
+  background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-border) 100%);
 }
 
 .info {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .title {
-  font-size: 16px;
+  font-family: var(--font-display);
+  font-size: 17px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
 }
 
 .description {
@@ -56,4 +64,5 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.5;
 }

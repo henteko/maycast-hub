@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
+import styles from './Admin.module.css';
 
 export function AdminShowsPage() {
   const queryClient = useQueryClient();
@@ -14,59 +15,38 @@ export function AdminShowsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shows'] }),
   });
 
-  if (isLoading) return <p>読み込み中...</p>;
+  if (isLoading) return <p className={styles.loading}>読み込み中...</p>;
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <h1>番組管理</h1>
-        <Link
-          to="/admin/shows/new"
-          style={{
-            padding: '8px 16px',
-            background: 'var(--color-primary)',
-            color: 'white',
-            borderRadius: 'var(--radius)',
-            textDecoration: 'none',
-            fontWeight: 600,
-            fontSize: 14,
-          }}
-        >
-          新規作成
+      <div className={styles.pageHeader}>
+        <h1 className={styles.pageTitle}>番組管理</h1>
+        <Link to="/admin/shows/new" className={styles.primaryBtn}>
+          + 新規作成
         </Link>
       </div>
 
       {!shows?.length ? (
-        <p style={{ color: 'var(--color-text-secondary)' }}>番組がありません</p>
+        <p className={styles.empty}>番組がありません</p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className={styles.list}>
           {shows.map((show) => (
-            <div
-              key={show.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: 16,
-                background: 'var(--color-surface)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius)',
-              }}
-            >
-              <div>
-                <Link to={`/admin/shows/${show.id}`} style={{ fontWeight: 600 }}>
+            <div key={show.id} className={styles.row}>
+              <div className={styles.rowInfo}>
+                <Link to={`/admin/shows/${show.id}`} className={styles.rowTitle}>
                   {show.title}
                 </Link>
-                <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+                <div className={styles.rowActions}>
                   <Link
                     to={`/admin/shows/${show.id}/episodes`}
-                    style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}
+                    className={styles.rowLink}
                   >
                     エピソード管理
                   </Link>
+                  <span className={styles.dot}>&#183;</span>
                   <Link
                     to={`/admin/shows/${show.id}/analytics`}
-                    style={{ fontSize: 13, color: 'var(--color-text-secondary)' }}
+                    className={styles.rowLink}
                   >
                     アナリティクス
                   </Link>
@@ -78,14 +58,7 @@ export function AdminShowsPage() {
                     deleteMutation.mutate(show.id);
                   }
                 }}
-                style={{
-                  padding: '6px 12px',
-                  border: '1px solid var(--color-danger)',
-                  color: 'var(--color-danger)',
-                  background: 'transparent',
-                  borderRadius: 'var(--radius)',
-                  fontSize: 13,
-                }}
+                className={styles.dangerBtn}
               >
                 削除
               </button>

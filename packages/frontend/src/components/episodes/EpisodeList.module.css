@@ -1,10 +1,11 @@
 .list {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .empty {
   text-align: center;
-  padding: 48px 16px;
+  padding: 64px 16px;
   color: var(--color-text-secondary);
+  font-size: 15px;
 }

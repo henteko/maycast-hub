@@ -13,7 +13,7 @@ export function ShowCard({ show }: Props) {
         {show.artworkUrl ? (
           <img src={show.artworkUrl} alt={show.title} />
         ) : (
-          <div className={styles.placeholder}>🎙️</div>
+          <div className={styles.placeholder} />
         )}
       </div>
       <div className={styles.info}>

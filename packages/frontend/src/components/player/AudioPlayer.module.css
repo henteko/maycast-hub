@@ -10,33 +10,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  backdrop-filter: blur(16px);
 }
 
 .inner {
   max-width: var(--max-width);
   width: 100%;
-  padding: 0 16px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .playBtn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: var(--color-primary);
-  color: white;
+  color: var(--color-bg);
   font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: background 0.15s, transform 0.15s;
+  font-weight: 700;
 }
 
 .playBtn:hover {
   background: var(--color-primary-hover);
+  transform: scale(1.05);
 }
 
 .info {
@@ -45,28 +49,33 @@
 }
 
 .title {
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  margin-bottom: 4px;
 }
 
 .progressRow {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .slider {
   flex: 1;
   height: 4px;
   accent-color: var(--color-primary);
+  cursor: pointer;
 }
 
 .time {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--color-text-secondary);
   min-width: 36px;
+  font-variant-numeric: tabular-nums;
 }

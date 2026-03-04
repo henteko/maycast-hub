@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
 import { ShowForm } from '../../components/admin/ShowForm.js';
 import type { CreateShowInput, UpdateShowInput } from '@maycast/shared';
+import styles from './Admin.module.css';
 
 export function AdminShowEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -32,11 +33,11 @@ export function AdminShowEditPage() {
     },
   });
 
-  if (!isNew && isLoading) return <p>読み込み中...</p>;
+  if (!isNew && isLoading) return <p className={styles.loading}>読み込み中...</p>;
 
   return (
     <div>
-      <h1 style={{ marginBottom: 24 }}>
+      <h1 className={styles.pageTitle} style={{ marginBottom: 28 }}>
         {isNew ? '番組を作成' : '番組を編集'}
       </h1>
       <ShowForm

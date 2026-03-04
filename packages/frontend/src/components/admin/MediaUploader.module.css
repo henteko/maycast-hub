@@ -6,20 +6,40 @@
 
 .input {
   font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.input::file-selector-button {
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background 0.15s;
+}
+
+.input::file-selector-button:hover {
+  background: var(--color-bg);
 }
 
 .progressBar {
   position: relative;
-  height: 24px;
+  height: 28px;
   background: var(--color-bg);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   overflow: hidden;
+  border: 1px solid var(--color-border);
 }
 
 .progressFill {
   height: 100%;
   background: var(--color-primary);
   transition: width 0.2s;
+  opacity: 0.85;
 }
 
 .progressText {
@@ -30,9 +50,11 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
 .error {
   font-size: 13px;
   color: var(--color-danger);
+  font-weight: 500;
 }
