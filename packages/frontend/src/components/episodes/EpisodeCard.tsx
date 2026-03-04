@@ -1,6 +1,5 @@
 import type { Episode } from '@maycast/shared';
 import { usePlayer } from '../player/PlayerContext.js';
-import styles from './EpisodeCard.module.css';
 
 interface Props {
   episode: Episode;
@@ -28,9 +27,9 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
   };
 
   return (
-    <div className={`${styles.card} ${isCurrent ? styles.active : ''}`}>
+    <div className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}>
       <button
-        className={styles.playBtn}
+        className="size-11 rounded-full border-none bg-primary text-bg text-[15px] flex items-center justify-center shrink-0 self-center transition-all duration-150 font-bold hover:enabled:bg-primary-hover hover:enabled:scale-105 disabled:opacity-30 disabled:cursor-not-allowed"
         onClick={handlePlay}
         disabled={!episode.audioUrl}
       >
@@ -40,15 +39,15 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
         )}
       </button>
-      <div className={styles.info}>
-        <h4 className={styles.title}>{episode.title}</h4>
-        <p className={styles.meta}>
+      <div className="min-w-0 flex-1">
+        <h4 className="font-[var(--font-display)] text-[15px] font-semibold mb-1 tracking-[-0.01em]">{episode.title}</h4>
+        <p className="text-[13px] text-text-secondary mb-1.5">
           {episode.publishedAt &&
             new Date(episode.publishedAt).toLocaleDateString('ja-JP')}
           {episode.audioDuration && ` · ${formatDuration(episode.audioDuration)}`}
         </p>
         {episode.description && (
-          <p className={styles.description}>{episode.description}</p>
+          <p className="text-[13px] text-text-secondary leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">{episode.description}</p>
         )}
       </div>
     </div>

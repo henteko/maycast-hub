@@ -1,6 +1,5 @@
 import type { Episode } from '@maycast/shared';
 import { EpisodeCard } from './EpisodeCard.js';
-import styles from './EpisodeList.module.css';
 
 interface Props {
   episodes: Episode[];
@@ -10,11 +9,11 @@ interface Props {
 
 export function EpisodeList({ episodes, artworkUrl, showTitle }: Props) {
   if (episodes.length === 0) {
-    return <p className={styles.empty}>エピソードがありません</p>;
+    return <p className="text-center py-16 px-4 text-text-secondary text-[15px]">エピソードがありません</p>;
   }
 
   return (
-    <div className={styles.list}>
+    <div className="grid gap-2.5">
       {episodes.map((ep) => (
         <EpisodeCard key={ep.id} episode={ep} artworkUrl={artworkUrl} showTitle={showTitle} />
       ))}

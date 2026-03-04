@@ -2,7 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
 import { AnalyticsDashboard } from '../../components/admin/AnalyticsDashboard.js';
-import styles from './Admin.module.css';
 
 export function AdminAnalyticsPage() {
   const { showId } = useParams<{ showId: string }>();
@@ -15,9 +14,9 @@ export function AdminAnalyticsPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 className={styles.pageTitle}>{show?.title ?? ''} - アナリティクス</h1>
-        <Link to="/admin" className={styles.backLink}>
+      <div className="mb-7">
+        <h1 className="text-[22px] font-bold tracking-[-0.01em]">{show?.title ?? ''} - アナリティクス</h1>
+        <Link to="/admin" className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
           &#8592; 番組一覧に戻る
         </Link>
       </div>

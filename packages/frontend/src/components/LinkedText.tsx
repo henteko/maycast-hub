@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import styles from './LinkedText.module.css';
 
 interface Props {
   children: string;
@@ -11,7 +10,7 @@ function linkify(text: string): ReactNode[] {
   const parts = text.split(URL_REGEX);
   return parts.map((part, i) =>
     URL_REGEX.test(part) ? (
-      <a key={i} href={part} target="_blank" rel="noopener noreferrer">
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:opacity-80">
         {part}
       </a>
     ) : (
@@ -24,7 +23,7 @@ export function LinkedText({ children }: Props) {
   const lines = children.split('\n');
 
   return (
-    <div className={styles.content}>
+    <div className="text-sm leading-[1.8] text-text-secondary">
       {lines.map((line, i) => (
         <span key={i}>
           {linkify(line)}

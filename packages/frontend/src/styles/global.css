@@ -1,122 +1,145 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@theme {
+  --font-display: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-hover: var(--theme-surface-hover);
+  --color-primary: var(--theme-primary);
+  --color-primary-hover: var(--theme-primary-hover);
+  --color-primary-subtle: var(--theme-primary-subtle);
+  --color-text: var(--theme-text);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-border: var(--theme-border);
+  --color-danger: var(--theme-danger);
+  --color-success: var(--theme-success);
+  --color-warning: var(--theme-warning);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-slide-up: slide-up 0.3s ease-out;
+  --animate-scale-in: scale-in 0.25s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* ============================================
    Listener Theme — Light & Warm
-   明るく親しみやすいリスナー体験
    ============================================ */
 :root {
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F1F5F9;
-  --color-primary: #06B6D4;
-  --color-primary-hover: #0891B2;
-  --color-primary-subtle: rgba(6, 182, 212, 0.07);
-  --color-text: #0F172A;
-  --color-text-secondary: #64748B;
-  --color-border: #E2E8F0;
-  --color-danger: #EF4444;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --header-height: 64px;
-  --player-height: 80px;
-  --max-width: 1200px;
-  --font-display: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  --shadow-card: 0 1px 4px rgba(15, 23, 42, 0.06);
-  --shadow-card-hover: 0 4px 16px rgba(6, 182, 212, 0.10);
-  --gradient-header: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
-  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
+  --theme-bg: #F8FAFC;
+  --theme-surface: #FFFFFF;
+  --theme-surface-hover: #F1F5F9;
+  --theme-primary: #06B6D4;
+  --theme-primary-hover: #0891B2;
+  --theme-primary-subtle: rgba(6, 182, 212, 0.07);
+  --theme-text: #0F172A;
+  --theme-text-secondary: #64748B;
+  --theme-border: #E2E8F0;
+  --theme-danger: #EF4444;
+  --theme-success: #10B981;
+  --theme-warning: #F59E0B;
+  --theme-radius: 12px;
+  --theme-radius-sm: 8px;
+  --theme-header-height: 64px;
+  --theme-player-height: 80px;
+  --theme-max-width: 1200px;
+  --theme-shadow-card: 0 1px 4px rgba(15, 23, 42, 0.06);
+  --theme-shadow-card-hover: 0 4px 16px rgba(6, 182, 212, 0.10);
+  --theme-gradient-header: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --theme-gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.05) 0%, transparent 70%);
 }
 
 /* ============================================
    Admin Theme — Dark "Obsidian" UI
-   プロフェッショナルなダークテーマ
    ============================================ */
 [data-theme="admin"] {
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-surface-hover: #263548;
-  --color-primary: #06B6D4;
-  --color-primary-hover: #22D3EE;
-  --color-primary-subtle: rgba(6, 182, 212, 0.10);
-  --color-text: #F8FAFC;
-  --color-text-secondary: #94A3B8;
-  --color-border: #334155;
-  --color-danger: #EF4444;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --radius: 8px;
-  --radius-sm: 6px;
-  --header-height: 56px;
-  --player-height: 72px;
-  --font-display: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 4px 16px rgba(6, 182, 212, 0.12);
-  --gradient-header: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
-  --gradient-glow: none;
+  --theme-bg: #0F172A;
+  --theme-surface: #1E293B;
+  --theme-surface-hover: #263548;
+  --theme-primary: #06B6D4;
+  --theme-primary-hover: #22D3EE;
+  --theme-primary-subtle: rgba(6, 182, 212, 0.10);
+  --theme-text: #F8FAFC;
+  --theme-text-secondary: #94A3B8;
+  --theme-border: #334155;
+  --theme-danger: #EF4444;
+  --theme-success: #10B981;
+  --theme-warning: #F59E0B;
+  --theme-radius: 8px;
+  --theme-radius-sm: 6px;
+  --theme-header-height: 56px;
+  --theme-player-height: 72px;
+  --theme-shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --theme-shadow-card-hover: 0 4px 16px rgba(6, 182, 212, 0.12);
+  --theme-gradient-header: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+  --theme-gradient-glow: none;
 }
 
-body {
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s, color 0.3s;
-}
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s, color 0.3s;
+  }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  line-height: 1.3;
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    line-height: 1.3;
+  }
 
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
 
-a:hover {
-  text-decoration: underline;
-}
+  a:hover {
+    text-decoration: underline;
+  }
 
-button {
-  cursor: pointer;
-  font: inherit;
-  font-family: var(--font-body);
-}
+  button {
+    cursor: pointer;
+    font: inherit;
+    font-family: var(--font-body);
+  }
 
-input,
-textarea,
-select {
-  font: inherit;
-  font-family: var(--font-body);
-}
+  input, textarea, select {
+    font: inherit;
+    font-family: var(--font-body);
+  }
 
-img {
-  max-width: 100%;
-  display: block;
-}
+  img {
+    max-width: 100%;
+    display: block;
+  }
 
-/* Scrollbar theming */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 3px;
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 3px;
+  }
 }

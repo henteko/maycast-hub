@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
 import { EpisodeForm } from '../../components/admin/EpisodeForm.js';
 import type { CreateEpisodeInput, UpdateEpisodeInput } from '@maycast/shared';
-import styles from './Admin.module.css';
 
 export function AdminEpisodeEditPage() {
   const { showId, episodeId } = useParams<{ showId: string; episodeId: string }>();
@@ -33,11 +32,11 @@ export function AdminEpisodeEditPage() {
     },
   });
 
-  if (!isNew && isLoading) return <p className={styles.loading}>読み込み中...</p>;
+  if (!isNew && isLoading) return <p className="py-12 px-4 text-center text-text-secondary">読み込み中...</p>;
 
   return (
     <div>
-      <h1 className={styles.pageTitle} style={{ marginBottom: 28 }}>
+      <h1 className="text-[22px] font-bold tracking-[-0.01em] mb-7">
         {isNew ? 'エピソードを作成' : 'エピソードを編集'}
       </h1>
       <EpisodeForm

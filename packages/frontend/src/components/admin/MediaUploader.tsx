@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { api } from '../../api/client.js';
-import styles from './MediaUploader.module.css';
 
 interface Props {
   type: 'audio' | 'video' | 'image';
@@ -95,21 +94,21 @@ export function MediaUploader({ type, accept, onUploaded }: Props) {
   };
 
   return (
-    <div className={styles.uploader}>
+    <div className="flex flex-col gap-2">
       <input
         ref={inputRef}
         type="file"
         accept={accept}
         onChange={handleFileChange}
-        className={styles.input}
+        className="text-sm text-text-secondary file:px-3.5 file:py-1.5 file:border file:border-border file:rounded-[var(--theme-radius-sm)] file:bg-surface file:text-text file:text-[13px] file:font-medium file:cursor-pointer file:mr-2.5 file:transition-colors file:duration-150 hover:file:bg-bg"
       />
       {progress !== null && (
-        <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-          <span className={styles.progressText}>{progress}%</span>
+        <div className="relative h-7 bg-bg rounded-[var(--theme-radius-sm)] overflow-hidden border border-border">
+          <div className="h-full bg-primary transition-[width] duration-200 opacity-85" style={{ width: `${progress}%` }} />
+          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-semibold text-text tabular-nums">{progress}%</span>
         </div>
       )}
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className="text-[13px] text-danger font-medium">{error}</p>}
     </div>
   );
 }
