@@ -1,10 +1,14 @@
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client.js';
 import { EpisodeList } from '../components/episodes/EpisodeList.js';
+import { ShortVideoCarousel } from '../components/video/ShortVideoCarousel.js';
+import { ShortVideoPlayer } from '../components/video/ShortVideoPlayer.js';
 
 export function ShowPage() {
   const { id } = useParams<{ id: string }>();
+  const [videoPlayerIndex, setVideoPlayerIndex] = useState<number | null>(null);
 
   const { data: show, isLoading: showLoading } = useQuery({
     queryKey: ['shows', id],
@@ -17,6 +21,11 @@ export function ShowPage() {
     queryFn: () => api.episodes.listByShow(id!),
     enabled: !!id,
   });
+
+  const videoEpisodes = useMemo(
+    () => (episodes ?? []).filter((ep) => ep.videoUrl),
+    [episodes],
+  );
 
   if (showLoading || episodesLoading) return <p className="py-12 px-4 text-center text-text-secondary">読み込み中...</p>;
   if (!show) return <p className="py-12 px-4 text-center text-text-secondary">番組が見つかりません</p>;
@@ -38,8 +47,23 @@ export function ShowPage() {
           )}
         </div>
       </div>
+      {videoEpisodes.length > 0 && (
+        <ShortVideoCarousel
+          episodes={videoEpisodes}
+          onVideoSelect={(index) => setVideoPlayerIndex(index)}
+        />
+      )}
       <h2 className="text-lg font-semibold mb-4 tracking-[-0.01em]">エピソード</h2>
       <EpisodeList episodes={episodes ?? []} artworkUrl={show.artworkUrl} showTitle={show.title} />
+      {videoPlayerIndex !== null && (
+        <ShortVideoPlayer
+          episodes={videoEpisodes}
+          currentIndex={videoPlayerIndex}
+          showTitle={show.title}
+          onClose={() => setVideoPlayerIndex(null)}
+          onIndexChange={setVideoPlayerIndex}
+        />
+      )}
     </div>
   );
 }
