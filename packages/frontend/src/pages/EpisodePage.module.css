@@ -35,9 +35,6 @@
 
 .description {
   margin-top: 24px;
-  line-height: 1.9;
-  white-space: pre-wrap;
-  color: var(--color-text-secondary);
 }
 
 .videoSection {

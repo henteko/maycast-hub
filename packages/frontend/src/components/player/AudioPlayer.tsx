@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePlayer } from './PlayerContext.js';
+import { LinkedText } from '../LinkedText.js';
 import styles from './AudioPlayer.module.css';
 
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
@@ -165,7 +166,7 @@ export function AudioPlayer() {
             {episode.description && (
               <div className={styles.descriptionSection}>
                 <h3 className={styles.descriptionTitle}>概要</h3>
-                <p className={styles.descriptionText}>{episode.description}</p>
+                <LinkedText>{episode.description}</LinkedText>
               </div>
             )}
           </div>

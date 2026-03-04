@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../api/client.js';
 import { usePlayer } from '../components/player/PlayerContext.js';
+import { LinkedText } from '../components/LinkedText.js';
 import styles from './EpisodePage.module.css';
 
 export function EpisodePage() {
@@ -49,7 +50,9 @@ export function EpisodePage() {
       )}
 
       {episode.description && (
-        <p className={styles.description}>{episode.description}</p>
+        <div className={styles.description}>
+          <LinkedText>{episode.description}</LinkedText>
+        </div>
       )}
 
       {episode.videoUrl && (
