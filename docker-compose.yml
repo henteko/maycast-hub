@@ -40,8 +40,9 @@ services:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
       MINIO_API_CORS_ALLOW_ORIGIN: http://localhost
+    expose:
+      - "9000"
     ports:
-      - "9000:9000"
       - "9001:9001"
     volumes:
       - miniodata:/data
@@ -73,13 +74,12 @@ services:
     environment:
       DATABASE_URL: postgresql://maycast:maycast@postgres:5432/maycast
       S3_ENDPOINT: http://minio:9000
-      S3_PUBLIC_ENDPOINT: http://localhost:9000
+      S3_PUBLIC_ENDPOINT: http://localhost/storage
       S3_ACCESS_KEY: minioadmin
       S3_SECRET_KEY: minioadmin
       S3_BUCKET: maycast-media
       S3_REGION: us-east-1
       S3_FORCE_PATH_STYLE: "true"
-      MEDIA_BASE_URL: http://localhost:9000/maycast-media
       PORT: "3001"
       CORS_ORIGIN: http://localhost
     volumes:

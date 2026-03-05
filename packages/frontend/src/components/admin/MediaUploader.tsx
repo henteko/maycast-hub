@@ -4,7 +4,7 @@ import { api } from '../../api/client.js';
 interface Props {
   type: 'audio' | 'video' | 'image';
   accept: string;
-  onUploaded: (publicUrl: string, duration?: number) => void;
+  onUploaded: (objectKey: string, duration?: number) => void;
 }
 
 function getMediaDuration(file: File, mediaType: 'audio' | 'video'): Promise<number> {
@@ -38,7 +38,7 @@ export function MediaUploader({ type, accept, onUploaded }: Props) {
 
     try {
       // Get presigned URL
-      const { uploadUrl, objectKey, publicUrl } =
+      const { uploadUrl, objectKey } =
         await api.upload.getPresignedUrl({
           filename: file.name,
           contentType: file.type,
@@ -82,7 +82,7 @@ export function MediaUploader({ type, accept, onUploaded }: Props) {
       }
 
       setProgress(null);
-      onUploaded(publicUrl, duration);
+      onUploaded(objectKey, duration);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed');
       setProgress(null);

@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useRef, useCallback, useEffect, type ReactNode } from 'react';
 import type { Episode } from '@maycast/shared';
 import { api } from '../../api/client.js';
+import { mediaUrl } from '../../utils/media.js';
 
 interface PlayerMeta {
   artworkUrl?: string | null;
@@ -79,7 +80,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio || !episode.audioUrl) return;
 
-    audio.src = episode.audioUrl;
+    audio.src = mediaUrl(episode.audioUrl);
     const savedPos = getSavedPosition(episode.id);
     if (savedPos > 0) {
       audio.currentTime = savedPos;
@@ -220,7 +221,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: state.episode.title,
       artist: state.showTitle || 'Maycast Hub',
-      ...(state.artworkUrl ? { artwork: [{ src: state.artworkUrl }] } : {}),
+      ...(state.artworkUrl ? { artwork: [{ src: mediaUrl(state.artworkUrl) }] } : {}),
     });
 
     navigator.mediaSession.setActionHandler('play', () => resume());

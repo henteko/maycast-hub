@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { usePlayer } from './PlayerContext.js';
 import { LinkedText } from '../LinkedText.js';
+import { mediaUrl } from '../../utils/media.js';
 
 const PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
 
@@ -41,7 +42,7 @@ export function AudioPlayer() {
         <div className="max-w-[var(--theme-max-width)] mx-auto px-5 py-2.5 flex items-center gap-3">
           <button className="w-12 h-12 rounded-[var(--theme-radius-sm)] overflow-hidden shrink-0 border-none p-0 bg-transparent cursor-pointer" onClick={() => setExpanded(true)}>
             {artworkUrl ? (
-              <img src={artworkUrl} alt="" className="w-full h-full object-cover rounded-[var(--theme-radius-sm)]" />
+              <img src={mediaUrl(artworkUrl)} alt="" className="w-full h-full object-cover rounded-[var(--theme-radius-sm)]" />
             ) : (
               <div className="w-full h-full bg-border rounded-[var(--theme-radius-sm)]" />
             )}
@@ -94,7 +95,7 @@ export function AudioPlayer() {
             {/* Artwork */}
             <div className="w-60 h-60 mx-auto mb-6 rounded-[var(--theme-radius)] overflow-hidden shadow-[var(--theme-shadow-card)] max-sm:w-[200px] max-sm:h-[200px]">
               {artworkUrl ? (
-                <img src={artworkUrl} alt="" className="w-full h-full object-cover" />
+                <img src={mediaUrl(artworkUrl)} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-border to-surface-hover" />
               )}

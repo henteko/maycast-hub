@@ -23,5 +23,4 @@ export const env = {
     region: optional('S3_REGION', 'us-east-1'),
     forcePathStyle: optional('S3_FORCE_PATH_STYLE', 'true') === 'true',
   },
-  mediaBaseUrl: required('MEDIA_BASE_URL'),
 } as const;

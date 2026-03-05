@@ -18,7 +18,6 @@ export interface PresignedUrlRequest {
 export interface PresignedUrlResponse {
   uploadUrl: string;
   objectKey: string;
-  publicUrl: string;
 }
 
 export interface UploadConfirmRequest {

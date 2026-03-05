@@ -38,7 +38,7 @@ export const storageService = {
     filename: string,
     contentType: string,
     type: 'audio' | 'video' | 'image',
-  ): Promise<{ uploadUrl: string; objectKey: string; publicUrl: string }> {
+  ): Promise<{ uploadUrl: string; objectKey: string }> {
     const allowed = ALLOWED_CONTENT_TYPES[type];
     if (!allowed?.includes(contentType)) {
       throw new Error(`Invalid content type: ${contentType} for type: ${type}`);
@@ -54,9 +54,7 @@ export const storageService = {
 
     const uploadUrl = await getSignedUrl(s3Public, command, { expiresIn: 600 });
 
-    const publicUrl = `${env.mediaBaseUrl}/${objectKey}`;
-
-    return { uploadUrl, objectKey, publicUrl };
+    return { uploadUrl, objectKey };
   },
 
   async confirmUpload(objectKey: string): Promise<boolean> {

@@ -7,6 +7,7 @@ import { EpisodeList } from '../components/episodes/EpisodeList.js';
 import { usePlayer } from '../components/player/PlayerContext.js';
 import { ShortVideoCarousel } from '../components/video/ShortVideoCarousel.js';
 import { ShortVideoPlayer } from '../components/video/ShortVideoPlayer.js';
+import { mediaUrl } from '../utils/media.js';
 
 export interface VideoItem {
   videoId: string;
@@ -61,7 +62,7 @@ export function ShowPage() {
       for (const video of ep.videos) {
         items.push({
           videoId: video.id,
-          videoUrl: video.videoUrl,
+          videoUrl: mediaUrl(video.videoUrl),
           episodeId: ep.id,
           episodeTitle: ep.title,
           episode: ep,
@@ -79,7 +80,7 @@ export function ShowPage() {
       <div className="flex gap-8 mb-8 items-start max-md:flex-col max-md:items-center">
         {show.artworkUrl && (
           <img
-            src={show.artworkUrl}
+            src={mediaUrl(show.artworkUrl)}
             alt={show.title}
             className="w-[260px] h-[260px] rounded-(--theme-radius) object-cover shrink-0 shadow-(--theme-shadow-card) max-md:w-[200px] max-md:h-[200px]"
           />

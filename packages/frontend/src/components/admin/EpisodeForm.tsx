@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Episode, CreateEpisodeInput, UpdateEpisodeInput } from '@maycast/shared';
 import { MediaUploader } from './MediaUploader.js';
+import { mediaUrl } from '../../utils/media.js';
 
 interface Props {
   episode?: Episode;
@@ -79,7 +80,7 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">音声ファイル</label>
         {audioUrl && (
           <div className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
-            <audio controls src={audioUrl} className="w-full h-8" />
+            <audio controls src={mediaUrl(audioUrl)} className="w-full h-8" />
             <p className="text-xs text-text-secondary break-all font-mono m-0">{audioUrl}</p>
             {audioDuration != null && (
               <p className="text-xs text-text-secondary font-mono m-0">
@@ -104,7 +105,7 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
           <div className="flex flex-col gap-2">
             {videoUrls.map((url, index) => (
               <div key={index} className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
-                <video controls src={url} className="w-full max-h-[200px] rounded-[var(--theme-radius-sm)] bg-black" />
+                <video controls src={mediaUrl(url)} className="w-full max-h-[200px] rounded-[var(--theme-radius-sm)] bg-black" />
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-text-secondary break-all font-mono flex-1 min-w-0 truncate">{url}</span>
                   <div className="flex items-center gap-1 shrink-0">

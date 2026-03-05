@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Show, CreateShowInput, UpdateShowInput } from '@maycast/shared';
 import { MediaUploader } from './MediaUploader.js';
+import { mediaUrl } from '../../utils/media.js';
 
 interface Props {
   show?: Show;
@@ -44,7 +45,7 @@ export function ShowForm({ show, onSubmit, isSubmitting }: Props) {
       <div className="flex flex-col gap-1.5">
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">アートワーク</label>
         {artworkUrl && (
-          <img src={artworkUrl} alt="artwork" className="w-[120px] h-[120px] object-cover rounded-[var(--theme-radius)] border border-border" />
+          <img src={mediaUrl(artworkUrl)} alt="artwork" className="w-[120px] h-[120px] object-cover rounded-[var(--theme-radius)] border border-border" />
         )}
         <MediaUploader
           type="image"
