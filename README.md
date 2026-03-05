@@ -192,7 +192,9 @@ DOMAIN=your-domain.com
 # Google OAuth
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
-COOKIE_SECRET=$(python3 -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(32)).decode())')
+# COOKIE_SECRET は以下のコマンドで生成した値を設定 (base64エンコードされた32バイト):
+#   python3 -c 'import os,base64; print(base64.b64encode(os.urandom(32)).decode())'
+COOKIE_SECRET=<生成した値を貼り付け>
 ALLOWED_EMAIL_DOMAIN=yourcompany.com
 ```
 
