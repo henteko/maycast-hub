@@ -77,11 +77,16 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">音声ファイル</label>
-        {audioUrl && <p className="text-xs text-text-secondary break-all font-mono bg-bg px-2.5 py-1.5 rounded-[var(--theme-radius-sm)]">{audioUrl}</p>}
-        {audioDuration != null && (
-          <p className="text-xs text-text-secondary break-all font-mono bg-bg px-2.5 py-1.5 rounded-[var(--theme-radius-sm)]">
-            長さ: {Math.floor(audioDuration / 60)}:{(audioDuration % 60).toString().padStart(2, '0')}
-          </p>
+        {audioUrl && (
+          <div className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
+            <audio controls src={audioUrl} className="w-full h-8" />
+            <p className="text-xs text-text-secondary break-all font-mono m-0">{audioUrl}</p>
+            {audioDuration != null && (
+              <p className="text-xs text-text-secondary font-mono m-0">
+                長さ: {Math.floor(audioDuration / 60)}:{(audioDuration % 60).toString().padStart(2, '0')}
+              </p>
+            )}
+          </div>
         )}
         <MediaUploader
           type="audio"
@@ -98,9 +103,11 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
         {videoUrls.length > 0 && (
           <div className="flex flex-col gap-2">
             {videoUrls.map((url, index) => (
-              <div key={index} className="flex items-center gap-2 bg-bg px-2.5 py-1.5 rounded-[var(--theme-radius-sm)]">
-                <span className="text-xs text-text-secondary break-all font-mono flex-1 min-w-0 truncate">{url}</span>
-                <div className="flex items-center gap-1 shrink-0">
+              <div key={index} className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
+                <video controls src={url} className="w-full max-h-[200px] rounded-[var(--theme-radius-sm)] bg-black" />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-text-secondary break-all font-mono flex-1 min-w-0 truncate">{url}</span>
+                  <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     className="w-6 h-6 flex items-center justify-center bg-transparent border border-border rounded text-text-secondary text-xs hover:bg-surface disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
@@ -127,6 +134,7 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
                   >
                     ×
                   </button>
+                  </div>
                 </div>
               </div>
             ))}
