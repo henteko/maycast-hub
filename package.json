@@ -1,6 +1,7 @@
 {
   "name": "maycast-hub",
   "private": true,
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "docker compose up",
     "dev:build": "docker compose up --build",
