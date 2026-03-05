@@ -1,47 +1,67 @@
 # Maycast Hub
 
 社内Podcastツール。リスナー向けWebプレイヤーと管理者向けCMSを提供する。
+Google Workspaceアカウントによる認証で、許可されたドメインのユーザーのみアクセス可能。
+
+## アーキテクチャ
+
+```
+[ブラウザ]
+    |
+  Nginx (:80/:443)
+    ├── /              → Frontend (React SPA)
+    ├── /api/          → Backend (Express API)
+    ├── /media/        → MinIO (メディア配信)
+    ├── /storage/      → MinIO (Presigned URL アップロード)
+    └── /oauth2/       → 認証 (OAuth2 Proxy / fake-auth)
+         └── auth_request で全リクエストを認証
+```
+
+- **認証:** Nginx `auth_request` → OAuth2 Proxy (本番) / fake-auth (開発)
+- **メディア:** S3互換ストレージ (MinIO) へのアクセスはすべてNginx経由
+- **DB:** objectKey (`shows/uuid.webp` 等) を保存し、フロントエンドで `/media/` プレフィックスを付与
 
 ## 技術スタック
 
-- **Frontend:** React + Vite (TypeScript, CSS Modules, TanStack Query)
+- **Frontend:** React + Vite (TypeScript, Tailwind CSS, TanStack Query)
 - **Backend:** Express (TypeScript)
 - **Database:** PostgreSQL 16
-- **Media Storage:** Cloudflare R2 (本番) / MinIO (ローカル)
+- **Media Storage:** MinIO (S3互換)
+- **認証:** OAuth2 Proxy + Google OAuth2 (本番) / fake-auth (開発)
+- **リバースプロキシ:** Nginx
 - **構成:** pnpm workspaces モノレポ
 
 ## 前提条件
 
 - [Docker](https://docs.docker.com/get-docker/) & Docker Compose
-- [Node.js](https://nodejs.org/) >= 20
-- [pnpm](https://pnpm.io/) >= 9
 
-## 起動方法
+## 開発環境
+
+### 起動
 
 ```bash
 # 1. リポジトリをクローン
 git clone <repo-url>
 cd maycast-hub
 
-# 2. 依存パッケージをインストール
-pnpm install
-
-# 3. 全サービスを起動（PostgreSQL, MinIO, Backend, Frontend）
+# 2. 全サービスを起動
 docker compose up --build
 ```
 
 初回起動時にDBマイグレーションが自動で適用される。
 
-### アクセス先
+### アクセス
+
+http://localhost にアクセスすると、メールアドレス入力画面（fake-auth）が表示される。
+任意のメールアドレスを入力してログインする。
 
 | サービス | URL |
 |---------|-----|
-| フロントエンド | http://localhost:5173 |
-| バックエンドAPI | http://localhost:3001 |
+| アプリケーション | http://localhost |
 | MinIO Console | http://localhost:9001 (minioadmin / minioadmin) |
 | PostgreSQL | localhost:5432 (maycast / maycast) |
 
-## 開発
+### 開発
 
 ソースコードの変更はホットリロードで即座に反映される。
 
@@ -69,6 +89,7 @@ cp .env.example .env
 # .env を環境に合わせて編集
 
 # Backend
+pnpm install
 pnpm --filter @maycast/backend run dev
 
 # Frontend (別ターミナル)
@@ -85,13 +106,131 @@ pnpm run migrate
 
 マイグレーションファイルは `packages/backend/src/db/migrations/` に配置する。ファイル名順に適用される。
 
+## 本番環境デプロイ (AWS EC2)
+
+### 1. EC2 インスタンスの準備
+
+```bash
+# Amazon Linux 2023 / Ubuntu 推奨
+# インスタンスタイプ: t3.small 以上
+
+# Docker & Docker Compose をインストール
+# Amazon Linux 2023:
+sudo dnf install -y docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+
+# Docker Compose plugin
+sudo mkdir -p /usr/local/lib/docker/cli-plugins
+sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+  -o /usr/local/lib/docker/cli-plugins/docker-compose
+sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+```
+
+### 2. セキュリティグループ
+
+以下のポートを開放:
+
+| ポート | 用途 |
+|-------|------|
+| 80 | HTTP (HTTPS リダイレクト & Let's Encrypt) |
+| 443 | HTTPS |
+| 22 | SSH |
+
+### 3. DNS 設定
+
+ドメインのAレコードをEC2のElastic IPに向ける。
+
+### 4. Google OAuth の設定
+
+[Google Cloud Console](https://console.cloud.google.com/) で:
+
+1. プロジェクトを作成（または既存のものを使用）
+2. **APIとサービス** → **認証情報** → **OAuth 2.0 クライアント ID** を作成
+   - アプリケーションの種類: ウェブアプリケーション
+   - 承認済みリダイレクト URI: `https://your-domain.com/oauth2/callback`
+3. **OAuth 同意画面** を設定
+   - ユーザーの種類: 内部（Google Workspace の場合）
+
+### 5. SSL 証明書の取得
+
+```bash
+# 初回のみ: certbot で証明書を取得
+docker run --rm -p 80:80 -v letsencrypt:/etc/letsencrypt \
+  certbot/certbot certonly --standalone -d your-domain.com
+```
+
+### 6. 環境変数の設定
+
+```bash
+# リポジトリをクローン
+git clone <repo-url>
+cd maycast-hub
+
+# .env を作成
+cp .env.example .env
+```
+
+`.env` を編集:
+
+```env
+# Database
+DB_USER=maycast
+DB_PASSWORD=<強力なパスワード>
+DB_NAME=maycast
+
+# MinIO
+S3_ACCESS_KEY=<ランダムな文字列>
+S3_SECRET_KEY=<ランダムな文字列>
+S3_BUCKET=maycast-media
+S3_REGION=us-east-1
+
+# Domain
+DOMAIN=your-domain.com
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+COOKIE_SECRET=$(python3 -c 'import os,base64; print(base64.urlsafe_b64encode(os.urandom(32)).decode())')
+ALLOWED_EMAIL_DOMAIN=yourcompany.com
+```
+
+### 7. 起動
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+### 8. 動作確認
+
+```bash
+# ログを確認
+docker compose -f docker-compose.prod.yml logs -f
+
+# ヘルスチェック (認証不要)
+curl https://your-domain.com/api/health
+```
+
+`https://your-domain.com` にアクセスし、Googleログイン画面が表示されればOK。
+
+### 更新
+
+```bash
+git pull
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
 ## プロジェクト構成
 
 ```
 packages/
 ├── shared/          # @maycast/shared - 共有型定義
 ├── backend/         # @maycast/backend - Express API サーバー
-└── frontend/        # @maycast/frontend - React SPA
+├── frontend/        # @maycast/frontend - React SPA
+└── fake-auth/       # 開発用認証サービス (OAuth2 Proxy 互換)
+nginx/
+├── default.dev.conf   # 開発用 Nginx 設定
+└── default.prod.conf  # 本番用 Nginx 設定 (HTTPS + OAuth2 Proxy)
 ```
 
 ## API
@@ -115,7 +254,11 @@ packages/
 ## データリセット
 
 ```bash
-# DB・ストレージを含めて完全リセット
+# 開発環境: DB・ストレージを含めて完全リセット
 docker compose down -v
 docker compose up --build
+
+# 本番環境
+docker compose -f docker-compose.prod.yml down -v
+docker compose -f docker-compose.prod.yml up -d --build
 ```

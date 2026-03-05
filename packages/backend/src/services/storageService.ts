@@ -18,14 +18,7 @@ const s3Config = {
   responseChecksumValidation: 'WHEN_REQUIRED' as const,
 };
 
-// Internal client for server-side operations (HeadObject, etc.)
 const s3 = new S3Client({ ...s3Config, endpoint: env.s3.endpoint });
-
-// Public client for generating browser-accessible presigned URLs
-const s3Public = new S3Client({
-  ...s3Config,
-  endpoint: env.s3.publicEndpoint || env.s3.endpoint,
-});
 
 const ALLOWED_CONTENT_TYPES: Record<string, string[]> = {
   audio: ['audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/ogg', 'audio/webm'],
@@ -52,7 +45,10 @@ export const storageService = {
       Key: objectKey,
     });
 
-    const uploadUrl = await getSignedUrl(s3Public, command, { expiresIn: 600 });
+    const internalUrl = await getSignedUrl(s3, command, { expiresIn: 600 });
+    const uploadUrl = env.s3.publicEndpoint
+      ? internalUrl.replace(env.s3.endpoint, env.s3.publicEndpoint)
+      : internalUrl;
 
     return { uploadUrl, objectKey };
   },
