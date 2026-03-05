@@ -20,7 +20,7 @@ analyticsRouter.post('/play', async (req, res, next) => {
     const ip = req.ip ?? req.socket.remoteAddress;
     const ipHash = hashIp(ip);
 
-    await analyticsRepository.recordPlay(episodeId, userAgent, ipHash);
+    await analyticsRepository.recordPlay(episodeId, userAgent, ipHash, req.userEmail);
 
     // Refresh materialized view in background (best-effort)
     analyticsRepository.refreshPlayCounts().catch(() => {});

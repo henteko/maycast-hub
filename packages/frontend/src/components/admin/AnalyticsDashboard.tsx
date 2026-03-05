@@ -28,24 +28,27 @@ export function AnalyticsDashboard({ showId }: Props) {
       </div>
 
       {data.episodes.length > 0 && (
-        <table className="w-full border-collapse text-sm bg-surface rounded-[var(--theme-radius)] overflow-hidden border border-border [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:border-b [&_th]:border-border [&_th]:font-semibold [&_th]:text-text-secondary [&_th]:text-xs [&_th]:uppercase [&_th]:tracking-[0.04em] [&_th]:bg-bg [&_td]:px-4 [&_td]:py-3 [&_td]:text-left [&_td]:border-b [&_td]:border-border [&_tr:last-child_td]:border-b-0 [&_tr:hover_td]:bg-primary-subtle">
-          <thead>
-            <tr>
-              <th>エピソード</th>
-              <th>再生回数</th>
-              <th>ユニーク</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.episodes.map((ep) => (
-              <tr key={ep.episodeId}>
-                <td>{ep.episodeId.slice(0, 8)}...</td>
-                <td>{ep.totalPlays}</td>
-                <td>{ep.uniqueListeners}</td>
+        <>
+          <h2 className="text-base font-bold mt-2">エピソード別</h2>
+          <table className="w-full border-collapse text-sm bg-surface rounded-[var(--theme-radius)] overflow-hidden border border-border [&_th]:px-4 [&_th]:py-3 [&_th]:text-left [&_th]:border-b [&_th]:border-border [&_th]:font-semibold [&_th]:text-text-secondary [&_th]:text-xs [&_th]:uppercase [&_th]:tracking-[0.04em] [&_th]:bg-bg [&_td]:px-4 [&_td]:py-3 [&_td]:text-left [&_td]:border-b [&_td]:border-border [&_tr:last-child_td]:border-b-0 [&_tr:hover_td]:bg-primary-subtle">
+            <thead>
+              <tr>
+                <th>エピソード</th>
+                <th>再生回数</th>
+                <th>ユニークリスナー</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {data.episodes.map((ep) => (
+                <tr key={ep.episodeId}>
+                  <td>{ep.episodeTitle}</td>
+                  <td>{ep.totalPlays}</td>
+                  <td>{ep.uniqueListeners}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </>
       )}
     </div>
   );

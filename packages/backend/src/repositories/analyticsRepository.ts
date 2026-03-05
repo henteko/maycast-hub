@@ -3,6 +3,7 @@ import type { EpisodePlayCount } from '@maycast/shared';
 
 interface PlayCountRow {
   episodeId: string;
+  episodeTitle: string;
   totalPlays: string;
   uniqueListeners: string;
 }
@@ -12,10 +13,11 @@ export const analyticsRepository = {
     episodeId: string,
     userAgent: string | undefined,
     ipHash: string | undefined,
+    userEmail: string | undefined,
   ): Promise<void> {
     await query(
-      `INSERT INTO play_events (episode_id, user_agent, ip_hash) VALUES ($1, $2, $3)`,
-      [episodeId, userAgent ?? null, ipHash ?? null],
+      `INSERT INTO play_events (episode_id, user_agent, ip_hash, user_email) VALUES ($1, $2, $3, $4)`,
+      [episodeId, userAgent ?? null, ipHash ?? null, userEmail ?? null],
     );
   },
 
@@ -58,16 +60,19 @@ export const analyticsRepository = {
   ): Promise<{ totalPlays: number; uniqueListeners: number; episodes: EpisodePlayCount[] }> {
     const result = await query<PlayCountRow>(
       `SELECT e.id AS "episodeId",
+              e.title AS "episodeTitle",
               COALESCE(p.total_plays, 0)::text AS "totalPlays",
               COALESCE(p.unique_listeners, 0)::text AS "uniqueListeners"
        FROM episodes e
        LEFT JOIN episode_play_counts p ON p.episode_id = e.id
-       WHERE e.show_id = $1`,
+       WHERE e.show_id = $1
+       ORDER BY e.created_at DESC`,
       [showId],
     );
 
     const episodes: EpisodePlayCount[] = result.rows.map((r) => ({
       episodeId: r.episodeId,
+      episodeTitle: r.episodeTitle,
       totalPlays: Number(r.totalPlays),
       uniqueListeners: Number(r.uniqueListeners),
     }));

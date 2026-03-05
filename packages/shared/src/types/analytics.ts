@@ -5,6 +5,7 @@ export interface PlayEvent {
 
 export interface EpisodePlayCount {
   episodeId: string;
+  episodeTitle: string;
   totalPlays: number;
   uniqueListeners: number;
 }
