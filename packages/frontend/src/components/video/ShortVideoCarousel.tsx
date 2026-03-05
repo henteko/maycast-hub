@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import type { VideoItem } from '../../pages/ShowPage.js';
 
 interface Props {
@@ -21,10 +21,26 @@ function VideoThumbnail({ videoKey }: { videoKey: string }) {
     setReady(true);
   }, []);
 
+  // Fallback: on iOS WebKit the seeked event may never fire even with #t=0.5,
+  // so force-show the video after a short timeout if it has any frame data.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setReady(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Append #t=0.5 to hint iOS WebKit to preload a frame at 0.5s.
+  // iOS Chrome (WebKit) ignores programmatic currentTime seeks without
+  // user interaction, so the loadeddata→seek approach alone leaves the
+  // thumbnail invisible (opacity-0). The media fragment makes the browser
+  // render the 0.5s frame natively as a poster-like preview.
+  const srcWithTime = videoKey.includes('#') ? videoKey : `${videoKey}#t=0.5`;
+
   return (
     <video
       ref={videoRef}
-      src={videoKey}
+      src={srcWithTime}
       muted
       playsInline
       preload="metadata"
