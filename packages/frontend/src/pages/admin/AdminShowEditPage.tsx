@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
 import { ShowForm } from '../../components/admin/ShowForm.js';
@@ -36,9 +36,14 @@ export function AdminShowEditPage() {
 
   return (
     <div>
-      <h1 className="text-[22px] font-bold tracking-[-0.01em] mb-7">
-        {isNew ? '番組を作成' : '番組を編集'}
-      </h1>
+      <div className="mb-7">
+        <h1 className="text-[22px] font-bold tracking-[-0.01em]">
+          {isNew ? '番組を作成' : `${show?.title ?? ''} - 編集`}
+        </h1>
+        <Link to="/admin" className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
+          &#8592; 番組一覧に戻る
+        </Link>
+      </div>
       <ShowForm
         show={isNew ? undefined : show ?? undefined}
         onSubmit={(input) => {

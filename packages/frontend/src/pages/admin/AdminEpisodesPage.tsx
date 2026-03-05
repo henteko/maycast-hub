@@ -56,16 +56,28 @@ export function AdminEpisodesPage() {
       <div className="flex justify-between items-center mb-7">
         <div>
           <h1 className="text-[22px] font-bold tracking-[-0.01em]">{show?.title ?? ''} - エピソード管理</h1>
-          <Link to="/admin" className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
-            &#8592; 番組一覧に戻る
+          <div className="flex gap-1 items-center mt-1">
+            <Link to="/admin" className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
+              番組一覧
+            </Link>
+            <span className="text-border text-[13px] leading-none">&gt;</span>
+            <span className="text-[13px] text-text-secondary">エピソード管理</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Link
+            to={`/admin/shows/${showId}/analytics`}
+            className="inline-flex items-center gap-1 py-2 px-[18px] border border-border text-text-secondary rounded-(--theme-radius) no-underline font-semibold text-sm transition-colors duration-150 hover:border-primary hover:text-primary hover:no-underline"
+          >
+            アナリティクス
+          </Link>
+          <Link
+            to={`/admin/shows/${showId}/episodes/new`}
+            className="inline-flex items-center gap-1 py-2 px-[18px] bg-primary text-white rounded-(--theme-radius) no-underline font-semibold text-sm border-none transition-colors duration-150 hover:bg-primary-hover hover:no-underline"
+          >
+            + 新規作成
           </Link>
         </div>
-        <Link
-          to={`/admin/shows/${showId}/episodes/new`}
-          className="inline-flex items-center gap-1 py-2 px-[18px] bg-primary text-white rounded-(--theme-radius) no-underline font-semibold text-sm border-none transition-colors duration-150 hover:bg-primary-hover hover:no-underline"
-        >
-          + 新規作成
-        </Link>
       </div>
 
       {!episodes?.length ? (

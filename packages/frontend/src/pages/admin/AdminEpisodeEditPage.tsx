@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../api/client.js';
 import { EpisodeForm } from '../../components/admin/EpisodeForm.js';
@@ -9,6 +9,12 @@ export function AdminEpisodeEditPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isNew = episodeId === 'new';
+
+  const { data: show } = useQuery({
+    queryKey: ['shows', showId],
+    queryFn: () => api.shows.get(showId!),
+    enabled: !!showId,
+  });
 
   const { data: episode, isLoading } = useQuery({
     queryKey: ['episodes', episodeId],
@@ -36,9 +42,20 @@ export function AdminEpisodeEditPage() {
 
   return (
     <div>
-      <h1 className="text-[22px] font-bold tracking-[-0.01em] mb-7">
-        {isNew ? 'エピソードを作成' : 'エピソードを編集'}
-      </h1>
+      <div className="mb-7">
+        <h1 className="text-[22px] font-bold tracking-[-0.01em]">
+          {isNew ? 'エピソードを作成' : 'エピソードを編集'}
+        </h1>
+        <div className="flex gap-1 items-center mt-1">
+          <Link to="/admin" className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
+            番組一覧
+          </Link>
+          <span className="text-border text-[13px] leading-none">&gt;</span>
+          <Link to={`/admin/shows/${showId}/episodes`} className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline">
+            {show?.title ?? ''} - エピソード管理
+          </Link>
+        </div>
+      </div>
       <EpisodeForm
         episode={isNew ? undefined : episode ?? undefined}
         showId={showId!}

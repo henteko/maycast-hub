@@ -32,35 +32,40 @@ export function AdminShowsPage() {
           {shows.map((show) => (
             <div key={show.id} className="flex items-center justify-between py-3.5 px-[18px] bg-surface border border-border rounded-(--theme-radius) gap-3 transition-shadow duration-150 hover:shadow-(--theme-shadow-card-hover) max-md:flex-wrap">
               <div className="flex-1 min-w-0">
-                <Link to={`/admin/shows/${show.id}`} className="font-semibold text-[15px] text-text no-underline hover:text-primary hover:no-underline">
+                <span className="font-semibold text-[15px] text-text">
                   {show.title}
-                </Link>
-                <div className="flex gap-1 items-center mt-1">
-                  <Link
-                    to={`/admin/shows/${show.id}/episodes`}
-                    className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline"
-                  >
-                    エピソード管理
-                  </Link>
-                  <span className="text-border text-base leading-none">&#183;</span>
-                  <Link
-                    to={`/admin/shows/${show.id}/analytics`}
-                    className="text-[13px] text-text-secondary no-underline transition-colors duration-150 hover:text-primary hover:no-underline"
-                  >
-                    アナリティクス
-                  </Link>
-                </div>
+                </span>
               </div>
-              <button
-                onClick={() => {
-                  if (confirm('この番組を削除しますか？')) {
-                    deleteMutation.mutate(show.id);
-                  }
-                }}
-                className="py-1.5 px-3.5 border border-danger text-danger bg-transparent rounded-(--theme-radius) text-[13px] font-medium transition-[background,color] duration-150 shrink-0 hover:bg-danger hover:text-white"
-              >
-                削除
-              </button>
+              <div className="flex gap-2 shrink-0 flex-wrap max-md:w-full max-md:justify-end">
+                <Link
+                  to={`/admin/shows/${show.id}/episodes`}
+                  className="py-1.5 px-3.5 border border-border text-text-secondary bg-transparent rounded-(--theme-radius) text-[13px] font-medium no-underline transition-colors duration-150 shrink-0 hover:border-primary hover:text-primary hover:no-underline"
+                >
+                  エピソード管理
+                </Link>
+                <Link
+                  to={`/admin/shows/${show.id}/analytics`}
+                  className="py-1.5 px-3.5 border border-border text-text-secondary bg-transparent rounded-(--theme-radius) text-[13px] font-medium no-underline transition-colors duration-150 shrink-0 hover:border-primary hover:text-primary hover:no-underline"
+                >
+                  アナリティクス
+                </Link>
+                <Link
+                  to={`/admin/shows/${show.id}`}
+                  className="py-1.5 px-3.5 border border-border text-text-secondary bg-transparent rounded-(--theme-radius) text-[13px] font-medium no-underline transition-colors duration-150 shrink-0 hover:border-primary hover:text-primary hover:no-underline"
+                >
+                  編集
+                </Link>
+                <button
+                  onClick={() => {
+                    if (confirm('この番組を削除しますか？')) {
+                      deleteMutation.mutate(show.id);
+                    }
+                  }}
+                  className="py-1.5 px-3.5 border border-danger text-danger bg-transparent rounded-(--theme-radius) text-[13px] font-medium transition-[background,color] duration-150 shrink-0 hover:bg-danger hover:text-white"
+                >
+                  削除
+                </button>
+              </div>
             </div>
           ))}
         </div>
