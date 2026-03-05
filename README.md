@@ -156,9 +156,10 @@ sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
 ```bash
 # 初回のみ: certbot で証明書を取得
+# ボリューム名は docker compose のプロジェクト名に合わせる (デフォルト: ディレクトリ名_letsencrypt)
 sudo docker run --rm -it -p 80:80 \
-  -v letsencrypt:/etc/letsencrypt \
-  certbot/certbot certonly --standalone -d your-domain.com 
+  -v maycast-hub_letsencrypt:/etc/letsencrypt \
+  certbot/certbot certonly --standalone -d your-domain.com
 ```
 
 ### 6. 環境変数の設定
