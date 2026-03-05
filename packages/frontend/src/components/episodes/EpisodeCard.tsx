@@ -1,4 +1,5 @@
 import type { Episode } from '@maycast/shared';
+import { Link } from 'react-router-dom';
 import { usePlayer } from '../player/PlayerContext.js';
 
 interface Props {
@@ -18,7 +19,9 @@ export function EpisodeCard({ episode, artworkKey, showTitle }: Props) {
   const { play, episode: currentEpisode, isPlaying, togglePlayPause } = usePlayer();
   const isCurrent = currentEpisode?.id === episode.id;
 
-  const handlePlay = () => {
+  const handlePlay = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isCurrent) {
       togglePlayPause();
     } else {
@@ -27,9 +30,9 @@ export function EpisodeCard({ episode, artworkKey, showTitle }: Props) {
   };
 
   return (
-    <div
-      className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] cursor-pointer overflow-hidden ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}
-      onClick={handlePlay}
+    <Link
+      to={`/shows/${episode.showId}/episodes/${episode.id}`}
+      className={`flex gap-3.5 p-[18px] bg-surface border border-border rounded-[var(--theme-radius)] transition-all duration-200 hover:shadow-[var(--theme-shadow-card-hover)] cursor-pointer overflow-hidden no-underline text-inherit ${isCurrent ? 'border-primary bg-primary-subtle' : ''}`}
     >
       <button
         className="size-11 rounded-full border-none bg-primary text-bg text-[15px] flex items-center justify-center shrink-0 self-center transition-all duration-150 font-bold hover:enabled:bg-primary-hover hover:enabled:scale-105 disabled:opacity-30 disabled:cursor-not-allowed"
@@ -63,6 +66,6 @@ export function EpisodeCard({ episode, artworkKey, showTitle }: Props) {
           <p className="text-[13px] text-text-secondary leading-relaxed line-clamp-2">{episode.description}</p>
         )}
       </div>
-    </div>
+    </Link>
   );
 }

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout.js';
 import { HomePage } from './pages/HomePage.js';
 import { ShowPage } from './pages/ShowPage.js';
+import { EpisodePage } from './pages/EpisodePage.js';
 import { AdminShowsPage } from './pages/admin/AdminShowsPage.js';
 import { AdminShowEditPage } from './pages/admin/AdminShowEditPage.js';
 import { AdminEpisodesPage } from './pages/admin/AdminEpisodesPage.js';
@@ -15,6 +16,7 @@ export function App() {
         {/* Listener pages */}
         <Route path="/" element={<HomePage />} />
         <Route path="/shows/:id" element={<ShowPage />} />
+        <Route path="/shows/:showId/episodes/:episodeId" element={<EpisodePage />} />
 
         {/* Admin pages */}
         <Route path="/admin" element={<AdminShowsPage />} />

@@ -74,7 +74,7 @@ ogpRouter.get('/shows/:showId/episodes/:episodeId', async (req, res, next) => {
       title: `${episode.title} - ${show.title}`,
       description: episode.description || show.description || '',
       image: show.artworkKey ? ogpImageUrl(origin, show.artworkKey) : undefined,
-      url: `${origin}/shows/${show.id}`,
+      url: `${origin}/shows/${show.id}/episodes/${episode.id}`,
     });
     res.type('html').send(html);
   } catch (err) {
