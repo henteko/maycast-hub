@@ -8,6 +8,7 @@ import { showsRouter } from './routes/shows.js';
 import { episodesRouter } from './routes/episodes.js';
 import { uploadRouter } from './routes/upload.js';
 import { analyticsRouter } from './routes/analytics.js';
+import { ogpRouter } from './routes/ogp.js';
 
 export function createApp() {
   const app = express();
@@ -19,6 +20,9 @@ export function createApp() {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
+
+  // OGP routes (no auth required - served to crawlers only via nginx)
+  app.use('/api/ogp', ogpRouter);
 
   app.use(authMiddleware);
 
