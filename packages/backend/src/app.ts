@@ -3,6 +3,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import { env } from './config/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { authMiddleware } from './middleware/auth.js';
 import { showsRouter } from './routes/shows.js';
 import { episodesRouter } from './routes/episodes.js';
 import { uploadRouter } from './routes/upload.js';
@@ -18,6 +19,8 @@ export function createApp() {
   app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok' });
   });
+
+  app.use(authMiddleware);
 
   app.use('/api/shows', showsRouter);
   app.use('/api/episodes', episodesRouter);

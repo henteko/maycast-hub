@@ -1,4 +1,22 @@
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+      - fake-auth
+
+  fake-auth:
+    build:
+      context: ./packages/fake-auth
+      dockerfile: Dockerfile.dev
+    expose:
+      - "4180"
+
   postgres:
     image: postgres:16-alpine
     environment:
@@ -21,7 +39,7 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_API_CORS_ALLOW_ORIGIN: http://localhost:5173
+      MINIO_API_CORS_ALLOW_ORIGIN: http://localhost
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -50,8 +68,8 @@ services:
     build:
       context: .
       dockerfile: packages/backend/Dockerfile.dev
-    ports:
-      - "3001:3001"
+    expose:
+      - "3001"
     environment:
       DATABASE_URL: postgresql://maycast:maycast@postgres:5432/maycast
       S3_ENDPOINT: http://minio:9000
@@ -63,7 +81,7 @@ services:
       S3_FORCE_PATH_STYLE: "true"
       MEDIA_BASE_URL: http://localhost:9000/maycast-media
       PORT: "3001"
-      CORS_ORIGIN: http://localhost:5173
+      CORS_ORIGIN: http://localhost
     volumes:
       - ./packages/backend/src:/app/packages/backend/src
       - ./packages/shared/src:/app/packages/shared/src
@@ -77,10 +95,10 @@ services:
     build:
       context: .
       dockerfile: packages/frontend/Dockerfile.dev
-    ports:
-      - "5173:5173"
+    expose:
+      - "5173"
     environment:
-      VITE_API_URL: http://localhost:3001
+      VITE_API_URL: ""
     volumes:
       - ./packages/frontend/src:/app/packages/frontend/src
       - ./packages/frontend/index.html:/app/packages/frontend/index.html
