@@ -2,7 +2,7 @@ export interface Show {
   id: string;
   title: string;
   description: string;
-  artworkUrl: string | null;
+  artworkKey: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -10,11 +10,11 @@ export interface Show {
 export interface CreateShowInput {
   title: string;
   description?: string;
-  artworkUrl?: string;
+  artworkKey?: string;
 }
 
 export interface UpdateShowInput {
   title?: string;
   description?: string;
-  artworkUrl?: string | null;
+  artworkKey?: string | null;
 }

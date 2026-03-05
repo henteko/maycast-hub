@@ -29,9 +29,9 @@ showsRouter.get('/:id', async (req, res, next) => {
 // POST /api/shows
 showsRouter.post('/', async (req, res, next) => {
   try {
-    const { title, description, artworkUrl } = req.body;
+    const { title, description, artworkKey } = req.body;
     if (!title) throw new AppError(400, 'title is required');
-    const show = await showRepository.create({ title, description, artworkUrl });
+    const show = await showRepository.create({ title, description, artworkKey });
     res.status(201).json({ data: show });
   } catch (err) {
     next(err);
@@ -41,8 +41,8 @@ showsRouter.post('/', async (req, res, next) => {
 // PUT /api/shows/:id
 showsRouter.put('/:id', async (req, res, next) => {
   try {
-    const { title, description, artworkUrl } = req.body;
-    const show = await showRepository.update(req.params.id, { title, description, artworkUrl });
+    const { title, description, artworkKey } = req.body;
+    const show = await showRepository.update(req.params.id, { title, description, artworkKey });
     if (!show) throw new AppError(404, 'Show not found');
     res.json({ data: show });
   } catch (err) {

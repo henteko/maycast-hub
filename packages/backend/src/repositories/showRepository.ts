@@ -5,7 +5,7 @@ interface ShowRow {
   id: string;
   title: string;
   description: string;
-  artworkUrl: string | null;
+  artworkKey: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -14,7 +14,7 @@ export const showRepository = {
   async findAll(): Promise<Show[]> {
     const result = await query<ShowRow>(
       `SELECT id, title, description,
-              artwork_url AS "artworkUrl",
+              artwork_key AS "artworkKey",
               created_at AS "createdAt",
               updated_at AS "updatedAt"
        FROM shows ORDER BY created_at DESC`,
@@ -25,7 +25,7 @@ export const showRepository = {
   async findById(id: string): Promise<Show | null> {
     const result = await query<ShowRow>(
       `SELECT id, title, description,
-              artwork_url AS "artworkUrl",
+              artwork_key AS "artworkKey",
               created_at AS "createdAt",
               updated_at AS "updatedAt"
        FROM shows WHERE id = $1`,
@@ -36,13 +36,13 @@ export const showRepository = {
 
   async create(input: CreateShowInput): Promise<Show> {
     const result = await query<ShowRow>(
-      `INSERT INTO shows (title, description, artwork_url)
+      `INSERT INTO shows (title, description, artwork_key)
        VALUES ($1, $2, $3)
        RETURNING id, title, description,
-                 artwork_url AS "artworkUrl",
+                 artwork_key AS "artworkKey",
                  created_at AS "createdAt",
                  updated_at AS "updatedAt"`,
-      [input.title, input.description ?? '', input.artworkUrl ?? null],
+      [input.title, input.description ?? '', input.artworkKey ?? null],
     );
     return result.rows[0];
   },
@@ -60,9 +60,9 @@ export const showRepository = {
       fields.push(`description = $${idx++}`);
       values.push(input.description);
     }
-    if (input.artworkUrl !== undefined) {
-      fields.push(`artwork_url = $${idx++}`);
-      values.push(input.artworkUrl);
+    if (input.artworkKey !== undefined) {
+      fields.push(`artwork_key = $${idx++}`);
+      values.push(input.artworkKey);
     }
 
     if (fields.length === 0) return this.findById(id);
@@ -73,7 +73,7 @@ export const showRepository = {
     const result = await query<ShowRow>(
       `UPDATE shows SET ${fields.join(', ')} WHERE id = $${idx}
        RETURNING id, title, description,
-                 artwork_url AS "artworkUrl",
+                 artwork_key AS "artworkKey",
                  created_at AS "createdAt",
                  updated_at AS "updatedAt"`,
       values,

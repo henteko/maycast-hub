@@ -12,11 +12,11 @@ interface Props {
 export function ShowForm({ show, onSubmit, isSubmitting }: Props) {
   const [title, setTitle] = useState(show?.title ?? '');
   const [description, setDescription] = useState(show?.description ?? '');
-  const [artworkUrl, setArtworkUrl] = useState(show?.artworkUrl ?? '');
+  const [artworkKey, setArtworkUrl] = useState(show?.artworkKey ?? '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ title, description, artworkUrl: artworkUrl || undefined });
+    onSubmit({ title, description, artworkKey: artworkKey || undefined });
   };
 
   return (
@@ -44,8 +44,8 @@ export function ShowForm({ show, onSubmit, isSubmitting }: Props) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">アートワーク</label>
-        {artworkUrl && (
-          <img src={mediaUrl(artworkUrl)} alt="artwork" className="w-[120px] h-[120px] object-cover rounded-[var(--theme-radius)] border border-border" />
+        {artworkKey && (
+          <img src={mediaUrl(artworkKey)} alt="artwork" className="w-[120px] h-[120px] object-cover rounded-[var(--theme-radius)] border border-border" />
         )}
         <MediaUploader
           type="image"

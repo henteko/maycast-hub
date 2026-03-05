@@ -6,7 +6,7 @@ interface Props {
   onVideoSelect: (index: number) => void;
 }
 
-function VideoThumbnail({ videoUrl }: { videoUrl: string }) {
+function VideoThumbnail({ videoKey }: { videoKey: string }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
 
@@ -24,7 +24,7 @@ function VideoThumbnail({ videoUrl }: { videoUrl: string }) {
   return (
     <video
       ref={videoRef}
-      src={videoUrl}
+      src={videoKey}
       muted
       playsInline
       preload="metadata"
@@ -50,7 +50,7 @@ export function ShortVideoCarousel({ videos, onVideoSelect }: Props) {
           >
             <div className="w-[120px] aspect-[9/16] rounded-[var(--theme-radius-sm)] bg-[#1a1a1a] overflow-hidden relative">
               {/* Thumbnail via paused video */}
-              <VideoThumbnail videoUrl={video.videoUrl} />
+              <VideoThumbnail videoKey={video.videoKey} />
               {/* Play icon */}
               <div className="absolute inset-0 flex items-center justify-center z-[1]">
                 <div className="w-10 h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center transition-transform duration-150 group-hover:scale-110">

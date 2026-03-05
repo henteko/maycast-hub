@@ -21,7 +21,7 @@ export function AudioPlayer() {
     currentTime,
     duration,
     playbackRate,
-    artworkUrl,
+    artworkKey,
     showTitle,
     togglePlayPause,
     seek,
@@ -41,8 +41,8 @@ export function AudioPlayer() {
       <div className="fixed bottom-0 left-0 right-0 z-100 bg-surface border-t border-border backdrop-blur-[16px]">
         <div className="max-w-[var(--theme-max-width)] mx-auto px-5 py-2.5 flex items-center gap-3">
           <button className="w-12 h-12 rounded-[var(--theme-radius-sm)] overflow-hidden shrink-0 border-none p-0 bg-transparent cursor-pointer" onClick={() => setExpanded(true)}>
-            {artworkUrl ? (
-              <img src={mediaUrl(artworkUrl)} alt="" className="w-full h-full object-cover rounded-[var(--theme-radius-sm)]" />
+            {artworkKey ? (
+              <img src={mediaUrl(artworkKey)} alt="" className="w-full h-full object-cover rounded-[var(--theme-radius-sm)]" />
             ) : (
               <div className="w-full h-full bg-border rounded-[var(--theme-radius-sm)]" />
             )}
@@ -94,8 +94,8 @@ export function AudioPlayer() {
 
             {/* Artwork */}
             <div className="w-60 h-60 mx-auto mb-6 rounded-[var(--theme-radius)] overflow-hidden shadow-[var(--theme-shadow-card)] max-sm:w-[200px] max-sm:h-[200px]">
-              {artworkUrl ? (
-                <img src={mediaUrl(artworkUrl)} alt="" className="w-full h-full object-cover" />
+              {artworkKey ? (
+                <img src={mediaUrl(artworkKey)} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-border to-surface-hover" />
               )}

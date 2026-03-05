@@ -11,7 +11,7 @@ import { mediaUrl } from '../utils/media.js';
 
 export interface VideoItem {
   videoId: string;
-  videoUrl: string;
+  videoKey: string;
   episodeId: string;
   episodeTitle: string;
   episode: Episode;
@@ -52,8 +52,8 @@ export function ShowPage() {
   const handlePlayEpisode = useCallback((episode: Episode) => {
     wasPlayingRef.current = false;
     setVideoPlayerIndex(null);
-    play(episode, { artworkUrl: show?.artworkUrl, showTitle: show?.title });
-  }, [play, show?.artworkUrl, show?.title]);
+    play(episode, { artworkKey: show.artworkKey, showTitle: show?.title });
+  }, [play, show?.artworkKey, show?.title]);
 
   const videoItems = useMemo<VideoItem[]>(() => {
     if (!episodes) return [];
@@ -62,7 +62,7 @@ export function ShowPage() {
       for (const video of ep.videos) {
         items.push({
           videoId: video.id,
-          videoUrl: mediaUrl(video.videoUrl),
+          videoKey: mediaUrl(video.videoKey),
           episodeId: ep.id,
           episodeTitle: ep.title,
           episode: ep,
@@ -78,9 +78,9 @@ export function ShowPage() {
   return (
     <div>
       <div className="flex gap-8 mb-8 items-start max-md:flex-col max-md:items-center">
-        {show.artworkUrl && (
+        {show.artworkKey && (
           <img
-            src={mediaUrl(show.artworkUrl)}
+            src={mediaUrl(show.artworkKey)}
             alt={show.title}
             className="w-[260px] h-[260px] rounded-(--theme-radius) object-cover shrink-0 shadow-(--theme-shadow-card) max-md:w-[200px] max-md:h-[200px]"
           />
@@ -99,13 +99,13 @@ export function ShowPage() {
         />
       )}
       <h2 className="text-lg font-semibold mb-4 tracking-[-0.01em]">エピソード</h2>
-      <EpisodeList episodes={episodes ?? []} artworkUrl={show.artworkUrl} showTitle={show.title} />
+      <EpisodeList episodes={episodes ?? []} artworkKey={show.artworkKey} showTitle={show.title} />
       {videoPlayerIndex !== null && (
         <ShortVideoPlayer
           videos={videoItems}
           currentIndex={videoPlayerIndex}
           showTitle={show.title}
-          artworkUrl={show.artworkUrl}
+          artworkKey={show.artworkKey}
           onClose={handleVideoClose}
           onIndexChange={setVideoPlayerIndex}
           onPlayEpisode={handlePlayEpisode}

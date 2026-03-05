@@ -13,10 +13,10 @@ interface Props {
 export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) {
   const [title, setTitle] = useState(episode?.title ?? '');
   const [description, setDescription] = useState(episode?.description ?? '');
-  const [audioUrl, setAudioUrl] = useState(episode?.audioUrl ?? '');
+  const [audioKey, setAudioKey] = useState(episode?.audioKey ?? '');
   const [audioDuration, setAudioDuration] = useState<number | null>(episode?.audioDuration ?? null);
-  const [videoUrls, setVideoUrls] = useState<string[]>(
-    episode?.videos.map((v) => v.videoUrl) ?? [],
+  const [videoKeys, setVideoKeys] = useState<string[]>(
+    episode?.videos.map((v) => v.videoKey) ?? [],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,32 +25,32 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
       onSubmit({
         title,
         description,
-        audioUrl: audioUrl || null,
+        audioKey: audioKey || null,
         audioDuration,
-        videoUrls,
+        videoKeys,
       } satisfies UpdateEpisodeInput);
     } else {
       onSubmit({
         showId,
         title,
         description,
-        audioUrl: audioUrl || undefined,
+        audioKey: audioKey || undefined,
         audioDuration: audioDuration ?? undefined,
-        videoUrls: videoUrls.length > 0 ? videoUrls : undefined,
+        videoKeys: videoKeys.length > 0 ? videoKeys : undefined,
       } satisfies CreateEpisodeInput);
     }
   };
 
   const moveVideo = (index: number, direction: -1 | 1) => {
     const newIndex = index + direction;
-    if (newIndex < 0 || newIndex >= videoUrls.length) return;
-    const newUrls = [...videoUrls];
-    [newUrls[index], newUrls[newIndex]] = [newUrls[newIndex], newUrls[index]];
-    setVideoUrls(newUrls);
+    if (newIndex < 0 || newIndex >= videoKeys.length) return;
+    const newKeys = [...videoKeys];
+    [newKeys[index], newKeys[newIndex]] = [newKeys[newIndex], newKeys[index]];
+    setVideoKeys(newKeys);
   };
 
   const removeVideo = (index: number) => {
-    setVideoUrls(videoUrls.filter((_, i) => i !== index));
+    setVideoKeys(videoKeys.filter((_, i) => i !== index));
   };
 
   return (
@@ -78,10 +78,10 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">音声ファイル</label>
-        {audioUrl && (
+        {audioKey && (
           <div className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
-            <audio controls src={mediaUrl(audioUrl)} className="w-full h-8" />
-            <p className="text-xs text-text-secondary break-all font-mono m-0">{audioUrl}</p>
+            <audio controls src={mediaUrl(audioKey)} className="w-full h-8" />
+            <p className="text-xs text-text-secondary break-all font-mono m-0">{audioKey}</p>
             {audioDuration != null && (
               <p className="text-xs text-text-secondary font-mono m-0">
                 長さ: {Math.floor(audioDuration / 60)}:{(audioDuration % 60).toString().padStart(2, '0')}
@@ -92,8 +92,8 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
         <MediaUploader
           type="audio"
           accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg"
-          onUploaded={(url, duration) => {
-            setAudioUrl(url);
+          onUploaded={(key, duration) => {
+            setAudioKey(key);
             if (duration != null) setAudioDuration(duration);
           }}
         />
@@ -101,13 +101,13 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
 
       <div className="flex flex-col gap-1.5">
         <label className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.04em]">動画ファイル（プロモーション用）</label>
-        {videoUrls.length > 0 && (
+        {videoKeys.length > 0 && (
           <div className="flex flex-col gap-2">
-            {videoUrls.map((url, index) => (
+            {videoKeys.map((key, index) => (
               <div key={index} className="bg-bg px-2.5 py-2 rounded-[var(--theme-radius-sm)] flex flex-col gap-1.5">
-                <video controls src={mediaUrl(url)} className="w-full max-h-[200px] rounded-[var(--theme-radius-sm)] bg-black" />
+                <video controls src={mediaUrl(key)} className="w-full max-h-[200px] rounded-[var(--theme-radius-sm)] bg-black" />
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-text-secondary break-all font-mono flex-1 min-w-0 truncate">{url}</span>
+                  <span className="text-xs text-text-secondary break-all font-mono flex-1 min-w-0 truncate">{key}</span>
                   <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
@@ -122,7 +122,7 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
                     type="button"
                     className="w-6 h-6 flex items-center justify-center bg-transparent border border-border rounded text-text-secondary text-xs hover:bg-surface disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
                     onClick={() => moveVideo(index, 1)}
-                    disabled={index === videoUrls.length - 1}
+                    disabled={index === videoKeys.length - 1}
                     title="下へ"
                   >
                     ↓
@@ -144,7 +144,7 @@ export function EpisodeForm({ episode, showId, onSubmit, isSubmitting }: Props) 
         <MediaUploader
           type="video"
           accept="video/mp4,video/webm"
-          onUploaded={(url) => setVideoUrls([...videoUrls, url])}
+          onUploaded={(key) => setVideoKeys([...videoKeys, key])}
         />
       </div>
 

@@ -4,7 +4,7 @@ import { api } from '../../api/client.js';
 import { mediaUrl } from '../../utils/media.js';
 
 interface PlayerMeta {
-  artworkUrl?: string | null;
+  artworkKey?: string | null;
   showTitle?: string;
 }
 
@@ -14,7 +14,7 @@ interface PlayerState {
   currentTime: number;
   duration: number;
   playbackRate: number;
-  artworkUrl: string | null;
+  artworkKey: string | null;
   showTitle: string;
 }
 
@@ -69,7 +69,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     currentTime: 0,
     duration: 0,
     playbackRate: getSavedSpeed(),
-    artworkUrl: null,
+    artworkKey: null,
     showTitle: '',
   });
   const playRecordedRef = useRef<string | null>(null);
@@ -78,9 +78,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   const play = useCallback((episode: Episode, meta?: PlayerMeta) => {
     const audio = audioRef.current;
-    if (!audio || !episode.audioUrl) return;
+    if (!audio || !episode.audioKey) return;
 
-    audio.src = mediaUrl(episode.audioUrl);
+    audio.src = mediaUrl(episode.audioKey);
     const savedPos = getSavedPosition(episode.id);
     if (savedPos > 0) {
       audio.currentTime = savedPos;
@@ -99,7 +99,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       currentTime: savedPos,
       duration: 0,
       playbackRate: rate,
-      artworkUrl: meta?.artworkUrl ?? null,
+      artworkKey: meta?.artworkKey ?? null,
       showTitle: meta?.showTitle ?? '',
     }));
 
@@ -221,7 +221,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: state.episode.title,
       artist: state.showTitle || 'Maycast Hub',
-      ...(state.artworkUrl ? { artwork: [{ src: mediaUrl(state.artworkUrl) }] } : {}),
+      ...(state.artworkKey ? { artwork: [{ src: mediaUrl(state.artworkKey) }] } : {}),
     });
 
     navigator.mediaSession.setActionHandler('play', () => resume());
@@ -231,7 +231,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     });
     navigator.mediaSession.setActionHandler('seekforward', () => skipForward(15));
     navigator.mediaSession.setActionHandler('seekbackward', () => skipBackward(15));
-  }, [state.episode, state.artworkUrl, state.showTitle, pause, resume, seek, skipForward, skipBackward]);
+  }, [state.episode, state.artworkKey, state.showTitle, pause, resume, seek, skipForward, skipBackward]);
 
   return (
     <PlayerContext.Provider

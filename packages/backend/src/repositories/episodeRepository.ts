@@ -7,7 +7,7 @@ interface EpisodeRow {
   title: string;
   description: string;
   status: string;
-  audioUrl: string | null;
+  audioKey: string | null;
   audioDuration: number | null;
   publishedAt: string | null;
   createdAt: string;
@@ -17,14 +17,14 @@ interface EpisodeRow {
 interface VideoRow {
   id: string;
   episodeId: string;
-  videoUrl: string;
+  videoKey: string;
   sortOrder: number;
   createdAt: string;
 }
 
 const SELECT_FIELDS = `
   id, show_id AS "showId", title, description, status,
-  audio_url AS "audioUrl",
+  audio_key AS "audioKey",
   audio_duration AS "audioDuration",
   published_at AS "publishedAt",
   created_at AS "createdAt",
@@ -32,7 +32,7 @@ const SELECT_FIELDS = `
 `;
 
 const VIDEO_SELECT_FIELDS = `
-  id, episode_id AS "episodeId", video_url AS "videoUrl",
+  id, episode_id AS "episodeId", video_key AS "videoKey",
   sort_order AS "sortOrder", created_at AS "createdAt"
 `;
 
@@ -66,12 +66,12 @@ async function attachVideosOne(row: EpisodeRow | undefined): Promise<Episode | n
 async function insertVideos(
   client: { query: (text: string, params?: unknown[]) => Promise<unknown> },
   episodeId: string,
-  videoUrls: string[],
+  videoKeys: string[],
 ): Promise<void> {
-  for (let i = 0; i < videoUrls.length; i++) {
+  for (let i = 0; i < videoKeys.length; i++) {
     await client.query(
-      `INSERT INTO episode_videos (episode_id, video_url, sort_order) VALUES ($1, $2, $3)`,
-      [episodeId, videoUrls[i], i],
+      `INSERT INTO episode_videos (episode_id, video_key, sort_order) VALUES ($1, $2, $3)`,
+      [episodeId, videoKeys[i], i],
     );
   }
 }
@@ -107,20 +107,20 @@ export const episodeRepository = {
   async create(input: CreateEpisodeInput): Promise<Episode> {
     return transaction(async (client) => {
       const result = await client.query<EpisodeRow>(
-        `INSERT INTO episodes (show_id, title, description, audio_url, audio_duration)
+        `INSERT INTO episodes (show_id, title, description, audio_key, audio_duration)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING ${SELECT_FIELDS}`,
         [
           input.showId,
           input.title,
           input.description ?? '',
-          input.audioUrl ?? null,
+          input.audioKey ?? null,
           input.audioDuration ?? null,
         ],
       );
       const row = result.rows[0];
-      if (input.videoUrls && input.videoUrls.length > 0) {
-        await insertVideos(client, row.id, input.videoUrls);
+      if (input.videoKeys && input.videoKeys.length > 0) {
+        await insertVideos(client, row.id, input.videoKeys);
       }
       // Fetch with videos
       const episodeResult = await client.query<EpisodeRow>(
@@ -152,9 +152,9 @@ export const episodeRepository = {
         fields.push(`description = $${idx++}`);
         values.push(input.description);
       }
-      if (input.audioUrl !== undefined) {
-        fields.push(`audio_url = $${idx++}`);
-        values.push(input.audioUrl);
+      if (input.audioKey !== undefined) {
+        fields.push(`audio_key = $${idx++}`);
+        values.push(input.audioKey);
       }
       if (input.audioDuration !== undefined) {
         fields.push(`audio_duration = $${idx++}`);
@@ -171,10 +171,10 @@ export const episodeRepository = {
       }
 
       // Replace videos if provided
-      if (input.videoUrls !== undefined) {
+      if (input.videoKeys !== undefined) {
         await client.query(`DELETE FROM episode_videos WHERE episode_id = $1`, [id]);
-        if (input.videoUrls.length > 0) {
-          await insertVideos(client, id, input.videoUrls);
+        if (input.videoKeys.length > 0) {
+          await insertVideos(client, id, input.videoKeys);
         }
       }
 

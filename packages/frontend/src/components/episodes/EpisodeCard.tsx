@@ -3,7 +3,7 @@ import { usePlayer } from '../player/PlayerContext.js';
 
 interface Props {
   episode: Episode;
-  artworkUrl?: string | null;
+  artworkKey?: string | null;
   showTitle?: string;
 }
 
@@ -14,7 +14,7 @@ function formatDuration(seconds: number | null): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
+export function EpisodeCard({ episode, artworkKey, showTitle }: Props) {
   const { play, episode: currentEpisode, isPlaying, togglePlayPause } = usePlayer();
   const isCurrent = currentEpisode?.id === episode.id;
 
@@ -22,7 +22,7 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
     if (isCurrent) {
       togglePlayPause();
     } else {
-      play(episode, { artworkUrl, showTitle });
+      play(episode, { artworkKey, showTitle });
     }
   };
 
@@ -34,7 +34,7 @@ export function EpisodeCard({ episode, artworkUrl, showTitle }: Props) {
       <button
         className="size-11 rounded-full border-none bg-primary text-bg text-[15px] flex items-center justify-center shrink-0 self-center transition-all duration-150 font-bold hover:enabled:bg-primary-hover hover:enabled:scale-105 disabled:opacity-30 disabled:cursor-not-allowed"
         onClick={handlePlay}
-        disabled={!episode.audioUrl}
+        disabled={!episode.audioKey}
       >
         {isCurrent && isPlaying ? (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1" /><rect x="14" y="4" width="4" height="16" rx="1" /></svg>

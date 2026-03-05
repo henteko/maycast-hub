@@ -7,7 +7,7 @@ interface Props {
   videos: VideoItem[];
   currentIndex: number;
   showTitle?: string;
-  artworkUrl?: string | null;
+  artworkKey?: string | null;
   onClose: () => void;
   onIndexChange: (index: number) => void;
   onPlayEpisode?: (episode: Episode) => void;
@@ -46,8 +46,8 @@ function VideoSlide({
     <div className="absolute inset-0 flex items-center justify-center bg-black">
       <video
         ref={videoRef}
-        key={video.videoUrl}
-        src={video.videoUrl}
+        key={video.videoKey}
+        src={video.videoKey}
         className="w-full h-full object-contain"
         playsInline
         autoPlay={isActive}
@@ -109,7 +109,7 @@ function VideoSlide({
             <p className="text-white font-semibold text-[15px] leading-tight mb-1">{video.episodeTitle}</p>
             <div className="flex items-center gap-2">
               {showTitle && <span className="text-white/70 text-[13px]">{showTitle}</span>}
-              {video.episode.audioUrl && onPlayEpisode && (
+              {video.episode.audioKey && onPlayEpisode && (
                 <button
                   className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-full border-none text-white text-[12px] font-semibold cursor-pointer transition-colors duration-150 hover:bg-white/30"
                   onClick={(e) => {
