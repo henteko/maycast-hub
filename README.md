@@ -255,6 +255,10 @@ nginx/
 | GET | `/api/analytics/episodes/:id` | エピソード統計 |
 | GET | `/api/analytics/shows/:id` | 番組統計 |
 
+## ライセンス
+
+このプロジェクトは [Apache License 2.0](LICENSE) のもとで公開されています。
+
 ## データリセット
 
 ```bash
