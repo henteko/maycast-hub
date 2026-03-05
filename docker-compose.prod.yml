@@ -24,7 +24,10 @@ services:
     image: quay.io/oauth2-proxy/oauth2-proxy:latest
     expose:
       - "4180"
+    volumes:
+      - ./oauth2-proxy/templates:/templates:ro
     environment:
+      OAUTH2_PROXY_CUSTOM_TEMPLATES_DIR: "/templates"
       OAUTH2_PROXY_PROVIDER: google
       OAUTH2_PROXY_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       OAUTH2_PROXY_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}

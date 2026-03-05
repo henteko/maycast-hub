@@ -36,26 +36,120 @@ const LOGIN_HTML = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dev Login</title>
+  <title>Sign In - Maycast Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f5f5f5; }
-    .card { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 400px; width: 100%; }
-    h1 { margin: 0 0 0.5rem; font-size: 1.25rem; }
-    p { color: #666; font-size: 0.875rem; margin: 0 0 1.5rem; }
-    input[type=email] { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
-    button { width: 100%; padding: 0.5rem; margin-top: 1rem; background: #4285f4; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
-    button:hover { background: #3367d6; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F8FAFC;
+      color: #0F172A;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+      overflow: hidden;
+    }
+    body::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(ellipse at center, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06), 0 8px 32px rgba(15, 23, 42, 0.08);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      animation: scale-in 0.3s ease-out;
+    }
+    @keyframes scale-in {
+      from { opacity: 0; transform: scale(0.96) translateY(8px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .logo { font-weight: 700; font-size: 28px; letter-spacing: -0.02em; margin-bottom: 4px; }
+    .dev-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #F59E0B;
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .subtitle { color: #64748B; font-size: 14px; margin-bottom: 32px; }
+    .email-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      color: #0F172A;
+      background: #F8FAFC;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .email-input:focus {
+      border-color: #06B6D4;
+      box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.12);
+    }
+    .email-input::placeholder { color: #94A3B8; }
+    .sign-in-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px 24px;
+      margin-top: 16px;
+      background: #06B6D4;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .sign-in-btn:hover {
+      background: #0891B2;
+      box-shadow: 0 4px 16px rgba(6, 182, 212, 0.25);
+    }
+    .sign-in-btn:active { transform: scale(0.98); }
+    .footer { margin-top: 28px; color: #94A3B8; font-size: 12px; }
+    @media (max-width: 480px) {
+      .card { margin: 16px; padding: 36px 24px; }
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1>Dev Login</h1>
-    <p>開発環境用の認証です。メールアドレスを入力してください。</p>
+    <div class="logo">Maycast Hub</div>
+    <span class="dev-badge">DEV</span>
+    <p class="subtitle">開発環境用の認証です。メールアドレスを入力してください。</p>
     <form method="POST" action="/oauth2/sign_in">
       <input type="hidden" name="rd" value="__REDIRECT__">
-      <input type="email" name="email" placeholder="user@example.com" required autofocus>
-      <button type="submit">ログイン</button>
+      <input class="email-input" type="email" name="email" placeholder="user@example.com" required autofocus>
+      <button type="submit" class="sign-in-btn">ログイン</button>
     </form>
+    <p class="footer">開発環境 - 任意のメールアドレスでログインできます</p>
   </div>
 </body>
 </html>`;
