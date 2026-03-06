@@ -85,7 +85,7 @@ export function AudioPlayer() {
       {/* Expanded Player Overlay */}
       {expanded && (
         <div className="fixed inset-0 z-200 bg-black/50 flex items-end justify-center animate-fade-in md:items-center" onClick={() => setExpanded(false)}>
-          <div className="bg-surface rounded-t-[20px] w-full max-w-[480px] max-h-[90vh] overflow-y-auto px-6 pt-4 pb-10 animate-slide-up md:rounded-2xl md:max-h-[85vh] md:shadow-[0_24px_48px_rgba(0,0,0,0.3)] md:animate-scale-in max-sm:max-w-full max-sm:px-4 max-sm:pb-8 max-sm:pt-3" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface rounded-t-[20px] w-full max-w-[480px] max-h-[60vh] overflow-y-auto px-6 pt-4 pb-10 animate-slide-up md:rounded-2xl md:max-h-[85vh] md:shadow-[0_24px_48px_rgba(0,0,0,0.3)] md:animate-scale-in max-sm:max-w-full max-sm:px-4 max-sm:pb-8 max-sm:pt-3" onClick={(e) => e.stopPropagation()}>
             <button className="flex items-center justify-center w-full p-1 border-none bg-transparent text-text-secondary cursor-pointer mb-4 hover:text-text" onClick={() => setExpanded(false)} aria-label="閉じる">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9l6 6 6-6" />
